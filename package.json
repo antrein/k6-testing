@@ -1,0 +1,12 @@
+{
+  "name": "k6-testing",
+  "version": "1.0.0",
+  "description": "project for testing.",
+  "main": "index.js",
+  "repository": "https://github.com/TA-Aegis/k6-testing.git",
+  "author": "reyshaznii <reyshazni@gmail.com>",
+  "private": null,
+  "dependencies": {
+    "k6": "^0.0.0"
+  }
+}
