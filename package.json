@@ -7,6 +7,10 @@
   "author": "reyshaznii <reyshazni@gmail.com>",
   "private": null,
   "dependencies": {
-    "k6": "^0.0.0"
+    "express": "^4.19.2",
+    "googleapis": "^137.1.0",
+    "k6": "^0.0.0",
+    "luxon": "^3.4.4",
+    "moment-timezone": "^0.5.45"
   }
 }
