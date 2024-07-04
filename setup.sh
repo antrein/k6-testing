@@ -3,11 +3,14 @@
 # Update package list and install necessary dependencies
 sudo apt-get update
 sudo apt-get upgrade -y
-sudo apt-get install -y curl gnupg bash git jq build-essential python3-dev libffi-dev
+sudo apt-get install -y curl gnupg bash git jq build-essential python3-dev libffi-dev npm make
 
-# Install Node.js
+# Install Node.js and npm
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
+
+# Install nodemon globally
+sudo npm install -g nodemon
 
 # Install k6
 curl -sLO https://github.com/grafana/k6/releases/download/v0.34.1/k6-v0.34.1-linux-amd64.tar.gz
@@ -43,11 +46,5 @@ chmod +x run-scenario.sh
 chmod +x get-cluster/gcp.sh
 chmod +x prometheus.sh
 
-# Start the node server
-node test-scenario.js &
-
-# Wait for the node server to start
-sleep 10
-
-# Execute the run-scenario.sh script
-./run-scenario.sh
+# Start the node server using nodemon
+nodemon test-scenario.js &
