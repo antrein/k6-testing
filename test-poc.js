@@ -20,7 +20,7 @@ app.post('/test', (req, res) => {
     return res.status(400).send('Missing parameters: vus and endpoint are required.');
   }
 
-  const k6ScriptPath = path.join(__dirname, 'test.js');
+  const k6ScriptPath = path.join(__dirname, 'k6-poc.js');
   const tempScriptPath = path.join(__dirname, 'temp_k6_script.js');
 
   // Determine the sheet name based on the endpoint

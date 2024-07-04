@@ -6,3 +6,7 @@ krun:
 
 run-poc:
 	k6 run poc.js
+
+run-scenario:
+	node test-scenario.js &
+	sh run-scenario.sh
