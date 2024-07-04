@@ -2,7 +2,9 @@ IMAGE_NAME = reyshazni/antrein-testing-v5
 TAG = latest
 
 run:
-	node run.js
+	pm2 stop test-scenario.js
+	pm2 start test-scenario.js
+	./run-scenario.sh
 
 krun:
 	k6 run index.js

@@ -39,25 +39,22 @@ function runBatchRequests(endpoint) {
 
   // Fire the additional request to api.antrein.com
   const queueResponse = http.get(`https://api.antrein.com/bc/queue/register?project_id=${project_id}`, params);
+  recordDuration(queueResponse);
 
-  check(queueResponse, {
-    'queue register status was 200': (r) => r.status === 200,
+  // Fire the main request to the project endpoint
+  const response = http.get(endpoint, params);
+  recordDuration(response);
+}
+
+function recordDuration(response) {
+  const isSuccess = check(response, {
+    'status was 200': (r) => r.status === 200,
   });
 
-  const responses = http.batch([
-    ['GET', endpoint, params]
-  ]);
-
-  responses.forEach((res) => {
-    const isSuccess = check(res, {
-      'status was 200': (r) => r.status === 200,
-    });
-
-    // Record metrics for successful and failed requests separately
-    if (res.status === 200) {
-      httpReqDurationSuccess.add(res.timings.duration);
-    } else {
-      httpReqDurationFail.add(res.timings.duration);
-    }
-  });
+  // Record metrics for successful and failed requests separately
+  if (response.status === 200) {
+    httpReqDurationSuccess.add(response.timings.duration);
+  } else {
+    httpReqDurationFail.add(response.timings.duration);
+  }
 }

@@ -5,6 +5,8 @@ sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get install -y curl gnupg bash git jq build-essential python3-dev libffi-dev npm make
 
+npm install pm2@latest -g
+
 # Install Node.js and npm
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
