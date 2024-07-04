@@ -29,7 +29,7 @@ query_prometheus() {
 }
 
 # Fetch max CPU usage
-cpu_usage_query="sum(rate(container_cpu_usage_seconds_total{namespace=\"$NAMESPACE\"}[5m]))"
+cpu_usage_query="sum(rate(container_cpu_usage_seconds_total{namespace=\"$NAMESPACE\"}[1m]))"
 cpu_response=$(query_prometheus "$cpu_usage_query" "$START_TIME" "$END_TIME" "$STEP")
 
 max_cpu=$(echo $cpu_response | jq '[.data.result[].values[] | .[1] | tonumber] | max')

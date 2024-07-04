@@ -29,4 +29,4 @@ dpush:
 	docker push $(IMAGE_NAME)
 
 connect:
-	gcloud compute ssh sentry-test --zone asia-southeast1-c --project pharindo-sandbox
+	gcloud compute ssh sentry-test --project=pharindo-sandbox --zone=asia-southeast1-c -- -o ServerAliveInterval=3600
