@@ -2,7 +2,6 @@
 
 # Configuration variables
 PROMETHEUS_URL="https://prometheus.antrein.com"
-NAMESPACE="production"
 STEP="5s" # Interval between data points
 
 # Validate arguments
@@ -28,16 +27,14 @@ query_prometheus() {
     "$PROMETHEUS_URL/api/v1/query_range"
 }
 
-# Fetch max CPU usage
-cpu_usage_query="sum(rate(container_cpu_usage_seconds_total{namespace=\"$NAMESPACE\"}[1m]))"
+# Fetch max CPU usage excluding specific namespaces
+cpu_usage_query="sum(rate(container_cpu_usage_seconds_total{namespace!~\"default|kube-system|kube-public|kube-node-lease|utils|monitoring\"}[1m]))"
 cpu_response=$(query_prometheus "$cpu_usage_query" "$START_TIME" "$END_TIME" "$STEP")
-
 max_cpu=$(echo $cpu_response | jq '[.data.result[].values[] | .[1] | tonumber] | max')
 
-# Fetch max memory usage
-memory_usage_query="sum(container_memory_working_set_bytes{namespace=\"$NAMESPACE\"})"
+# Fetch max memory usage excluding specific namespaces
+memory_usage_query="sum(container_memory_working_set_bytes{namespace!~\"default|kube-system|kube-public|kube-node-lease|utils|monitoring\"})"
 memory_response=$(query_prometheus "$memory_usage_query" "$START_TIME" "$END_TIME" "$STEP")
-
 max_memory=$(echo $memory_response | jq '[.data.result[].values[] | .[1] | tonumber] | max / 1024 / 1024')
 
 # Output results formatted to two decimal places
