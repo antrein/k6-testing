@@ -31,7 +31,7 @@ endpointsList.forEach((endpoint, index) => {
 
 function runBatchRequests(endpoint) {
   let params = {
-    timeout: '300',
+    timeout: '300s',
   };
 
   // Extract project_id from endpoint
