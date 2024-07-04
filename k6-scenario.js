@@ -18,7 +18,7 @@ export const options = {
 endpointsList.forEach((endpoint, index) => {
   options.scenarios[`scenario_${index + 1}`] = {
     executor: 'per-vu-iterations',
-    maxDuration: '10m',
+    maxDuration: '5m',
     vus: vus,
     exec: `scenario_${index + 1}`,
   };
@@ -31,7 +31,7 @@ endpointsList.forEach((endpoint, index) => {
 
 function runBatchRequests(endpoint) {
   let params = {
-    timeout: '1200s',
+    timeout: '300',
   };
 
   // Extract project_id from endpoint
