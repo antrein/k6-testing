@@ -36,8 +36,11 @@ app.post('/test', (req, res) => {
   // Capture the start time
   const startTime = moment().utc().format();
 
-  // Execute the k6 test using the generated script and save output as JSON
-  exec(`k6 run ${tempScriptPath} --summary-export output.json`, { maxBuffer: 1024 * 1024 * 20 }, async (error, stdout, stderr) => {
+  // Define the log file path
+  const logFilePath = path.join(__dirname, 'k6-error-logs.txt');
+
+  // Execute the k6 test using the generated script and save output as JSON, capturing stderr
+  exec(`k6 run ${tempScriptPath} --summary-export output.json 2>> ${logFilePath}`, { maxBuffer: 1024 * 1024 * 20 }, async (error, stdout, stderr) => {
     // Capture the end time
     const endTime = moment().utc().format();
 

@@ -39,14 +39,14 @@ function runBatchRequests(endpoint) {
 
   // Fire the additional request to api.antrein.com
   const queueResponse = http.get(`https://api.antrein.com/bc/queue/register?project_id=${project_id}`, params);
-  recordDuration(queueResponse);
+  recordDuration(queueResponse, `https://api.antrein.com/bc/queue/register?project_id=${project_id}`);
 
   // Fire the main request to the project endpoint
   const response = http.get(endpoint, params);
-  recordDuration(response);
+  recordDuration(response, endpoint);
 }
 
-function recordDuration(response) {
+function recordDuration(response, endpoint) {
   const isSuccess = check(response, {
     'status was 200': (r) => r.status === 200,
   });
@@ -56,5 +56,12 @@ function recordDuration(response) {
     httpReqDurationSuccess.add(response.timings.duration);
   } else {
     httpReqDurationFail.add(response.timings.duration);
+    logError(response, endpoint);
   }
+}
+
+function logError(response, endpoint) {
+  const datetime = new Date().toISOString();
+  const errorMessage = `Error: ${response.status} ${response.statusText}`;
+  console.error(`${datetime}, ${endpoint}, ${errorMessage}`);
 }
