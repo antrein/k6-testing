@@ -12,7 +12,7 @@ run-poc:
 
 run-scenario:
 	node test-scenario.js &
-	./ run-scenario.sh
+	sudo ./run-scenario.sh
 
 dbuild:
 	docker build --platform=linux/amd64 -t $(IMAGE_NAME) .
