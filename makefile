@@ -2,6 +2,9 @@ IMAGE_NAME = reyshazni/antrein-testing-v5
 TAG = latest
 
 run:
+	chmod +x run-scenario.sh
+	chmod +x get-cluster/gcp.sh
+	chmod +x prometheus.sh
 	pm2 stop test-scenario.js
 	pm2 start test-scenario.js
 	./run-scenario.sh
