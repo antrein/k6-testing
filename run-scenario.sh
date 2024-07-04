@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration variables
-ARTICLE="test1"
+ARTICLE="test3"
 PLATFORM="gcp"
 
 # Scenarios: Number of projects and VUs per project
@@ -10,6 +10,7 @@ scenario_number_of_project=(
   "3"
   "5"
 )
+
 scenario_number_of_vus=(
   "1"
   "100"
@@ -179,13 +180,12 @@ fetch_gcp_cluster_details() {
 # Function to clear projects
 clear_projects() {
   echo "Clearing all projects..."
-  curl -X DELETE "https://api.antrein.com/bc/dashboard/project/clear" -H "Content-Type: application/json"
+  curl -X DELETE "https://api.antrein.com/bc/dashboard/project/clear" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json"
   echo -e "\nAll projects cleared."
 }
 
 # Main script
 login
-clear_projects
 
 # Fetch cluster details if platform is GCP
 if [ "$PLATFORM" == "gcp" ]; then
@@ -198,24 +198,24 @@ elif [ "$PLATFORM" == "azure" ]; then
   echo "Fetching Azure cluster details... (Not implemented yet)"
 fi
 
-echo "Creating resources"
+# Run tests for each scenario
 for project_count in "${scenario_number_of_project[@]}"; do
+  clear_projects
+  echo "Creating resources for $project_count projects"
   for ((i=1; i<=project_count; i++)); do
     project_id="${ARTICLE}${project_count}${i}"
     create_and_configure_project $project_id
   done
-done
 
-# Pause for resources to provision
-echo "Pausing for 60 seconds to provision resources"
-for ((i=0; i<60; i++)); do
-  echo -ne "Provisioning resources, please wait... $((60-i))\r"
-  sleep 1
-done
-echo -ne '\n'
+  # Pause for resources to provision
+  echo "Pausing for 60 seconds to provision resources"
+  for ((i=0; i<60; i++)); do
+    echo -ne "Provisioning resources, please wait... $((60-i))\r"
+    sleep 1
+  done
+  echo -ne '\n'
 
-echo "Run k6 testing"
-for project_count in "${scenario_number_of_project[@]}"; do
+  echo "Run k6 testing for $project_count projects"
   project_urls=($(gather_project_urls $project_count $project_count))
   for vus_count in "${scenario_number_of_vus[@]}"; do
     send_test_request "$vus_count" "${project_urls[@]}"
