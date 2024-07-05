@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration variables
-PROMETHEUS_URL="https://prometheus.antrein.com"
+PROMETHEUS_URL="https://prometheus.antrein5.cloud"
 STEP="5s" # Interval between data points
 
 # Validate arguments

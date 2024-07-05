@@ -7,7 +7,7 @@ const httpReqDurationSuccess = new Trend('http_req_duration_success');
 const httpReqDurationFail = new Trend('http_req_duration_fail');
 
 // Placeholder arrays to be replaced dynamically
-const endpointsList = ["https://test351.antrein.cloud/","https://test352.antrein.cloud/","https://test353.antrein.cloud/","https://test354.antrein.cloud/","https://test355.antrein.cloud/"];
+const endpointsList = ["https://test351.antrein5.cloud/","https://test352.antrein5.cloud/","https://test353.antrein5.cloud/","https://test354.antrein5.cloud/","https://test355.antrein5.cloud/"];
 const vus = 5000;
 
 export const options = {
@@ -37,8 +37,8 @@ function runBatchRequests(endpoint) {
   // Extract project_id from endpoint
   const project_id = endpoint.match(/https:\/\/(.+)\.antrein\.cloud/)[1];
 
-  // Fire the additional request to api.antrein.com
-  const queueResponse = http.get(`https://api.antrein.com/bc/queue/register?project_id=${project_id}`, params);
+  // Fire the additional request to api.antrein5.cloud
+  const queueResponse = http.get(`https://api.antrein5.cloud/bc/queue/register?project_id=${project_id}`, params);
 
   check(queueResponse, {
     'queue register status was 200': (r) => r.status === 200,

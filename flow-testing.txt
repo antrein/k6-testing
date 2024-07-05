@@ -1,0 +1,8 @@
+1. sesuaikan spek node pool di gke
+2. infra manager delete all project, spin up dengan config yang diinginkan
+3. run test-scenario.js
+4. run test-scenario-stress.js
+
+APABILA GANTI DNS:
+1. ganti di gateway proxy
+2. search di sini, ganti juga

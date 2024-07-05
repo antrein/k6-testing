@@ -16,13 +16,12 @@ scenario_number_of_vus=(
   "100"
   "500"
   "1000"
-  "3000"
+  "5000"
 )
 
 # Variable
 EMAIL="riandyhsn@gmail.com"
 PASSWORD="babiguling123"
-BASE_URL="https://api.antrein.com/bc/dashboard"
 K6_TEST_URL="http://localhost:3001/test"
 HTML_HOST="demo-ticketing.site"
 THRESHOLD=2
@@ -30,6 +29,20 @@ SESSION_TIME=1
 MAX_USERS_IN_QUEUE=10
 QUEUE_START="2024-07-03T12:34:56"
 QUEUE_END="2024-07-03T23:59:59"
+
+# Function to fetch infra_mode and be_mode
+fetch_infra_mode_and_be_mode() {
+  local response=$(curl -s https://infra.antrein5.cloud)
+  local infra_mode=$(echo $response | jq -r '.infra_mode')
+  local be_mode=$(echo $response | jq -r '.be_mode')
+  echo $infra_mode $be_mode
+}
+
+# Fetch infra_mode and be_mode
+infra_be_modes=($(fetch_infra_mode_and_be_mode))
+infra_mode=${infra_be_modes[0]}
+be_mode=${infra_be_modes[1]}
+BASE_URL="https://api.antrein5.cloud/${be_mode}/dashboard"
 
 # Function to log in and retrieve the token
 login() {
@@ -111,18 +124,10 @@ gather_project_urls() {
   local project_urls=()
   for ((i=1; i<=num_projects; i++)); do
     project_id="${ARTICLE}${s}${i}"
-    project_url="https://${project_id}.antrein.cloud/"
+    project_url="https://${project_id}.antrein5.cloud/"
     project_urls+=("$project_url")
   done
   echo "${project_urls[@]}"
-}
-
-# Function to fetch infra_mode and be_mode
-fetch_infra_mode_and_be_mode() {
-  local response=$(curl -s https://infra.antrein.com)
-  local infra_mode=$(echo $response | jq -r '.infra_mode')
-  local be_mode=$(echo $response | jq -r '.be_mode')
-  echo $infra_mode $be_mode
 }
 
 # Function to send test request to the local server
@@ -131,9 +136,6 @@ send_test_request() {
   local vus_per_endpoint=$1
   shift
   local project_urls=("$@")
-  local infra_be_modes=($(fetch_infra_mode_and_be_mode))
-  local infra_mode=${infra_be_modes[0]}
-  local be_mode=${infra_be_modes[1]}
 
   local json_payload=$(jq -n \
     --argjson endpoints "$(printf '%s\n' "${project_urls[@]}" | jq -R . | jq -s .)" \
@@ -180,7 +182,7 @@ fetch_gcp_cluster_details() {
 # Function to clear projects
 clear_projects() {
   echo "Clearing all projects..."
-  curl -X DELETE "https://api.antrein.com/bc/dashboard/project/clear" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json"
+  curl -X DELETE "https://api.antrein5.cloud/${be_mode}/dashboard/project/clear" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json"
   echo -e "\nAll projects cleared."
 }
 
