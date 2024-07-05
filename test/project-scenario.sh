@@ -11,7 +11,7 @@ NUM_PROJECTS=$1
 ARTICLE="test5"
 
 # Base URL
-BASE_URL="https://api.antrein5.cloud/bc/dashboard"
+BASE_URL="https://api.antrein6.cloud/bc/dashboard"
 
 # Credentials
 EMAIL="riandyhsn@gmail.com"

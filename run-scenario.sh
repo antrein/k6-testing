@@ -32,7 +32,7 @@ QUEUE_END="2024-07-03T23:59:59"
 
 # Function to fetch infra_mode and be_mode
 fetch_infra_mode_and_be_mode() {
-  local response=$(curl -s https://infra.antrein5.cloud)
+  local response=$(curl -s https://infra.antrein6.cloud)
   local infra_mode=$(echo $response | jq -r '.infra_mode')
   local be_mode=$(echo $response | jq -r '.be_mode')
   echo $infra_mode $be_mode
@@ -42,7 +42,7 @@ fetch_infra_mode_and_be_mode() {
 infra_be_modes=($(fetch_infra_mode_and_be_mode))
 infra_mode=${infra_be_modes[0]}
 be_mode=${infra_be_modes[1]}
-BASE_URL="https://api.antrein5.cloud/${be_mode}/dashboard"
+BASE_URL="https://api.antrein6.cloud/${be_mode}/dashboard"
 
 # Function to log in and retrieve the token
 login() {
@@ -124,7 +124,7 @@ gather_project_urls() {
   local project_urls=()
   for ((i=1; i<=num_projects; i++)); do
     project_id="${ARTICLE}${s}${i}"
-    project_url="https://${project_id}.antrein5.cloud/"
+    project_url="https://${project_id}.antrein6.cloud/"
     project_urls+=("$project_url")
   done
   echo "${project_urls[@]}"
@@ -182,7 +182,7 @@ fetch_gcp_cluster_details() {
 # Function to clear projects
 clear_projects() {
   echo "Clearing all projects..."
-  curl -X DELETE "https://api.antrein5.cloud/${be_mode}/dashboard/project/clear" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json"
+  curl -X DELETE "https://api.antrein6.cloud/${be_mode}/dashboard/project/clear" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json"
   echo -e "\nAll projects cleared."
 }
 

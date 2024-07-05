@@ -20,7 +20,7 @@ export const options = {
 
 // Setup function to fetch `infra_mode` and `be_mode`
 export function setup() {
-  let response = http.get('https://infra.antrein5.cloud');
+  let response = http.get('https://infra.antrein6.cloud');
   let infra_mode = JSON.parse(response.body).infra_mode;
   let be_mode = JSON.parse(response.body).be_mode;
 
@@ -51,9 +51,9 @@ function runBatchRequests(endpoint, infra_mode, be_mode) {
   // Extract project_id from endpoint
   const project_id = endpoint.match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1];
 
-  // Fire the additional request to api.antrein5.cloud
-  const queueResponse = http.get(`https://api.antrein5.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
-  recordDuration(queueResponse, `https://api.antrein5.cloud/${be_mode}/queue/register?project_id=${project_id}`);
+  // Fire the additional request to api.antrein6.cloud
+  const queueResponse = http.get(`https://api.antrein6.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
+  recordDuration(queueResponse, `https://api.antrein6.cloud/${be_mode}/queue/register?project_id=${project_id}`);
 
   // Fire the main request to the project endpoint
   const response = http.get(endpoint, params);
