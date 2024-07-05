@@ -1,13 +1,14 @@
 import http from 'k6/http';
 import { check } from 'k6';
 import { Trend } from 'k6/metrics';
+import { SharedArray } from 'k6/data';
 
 // Define custom trends for success and failure durations
 const httpReqDurationSuccess = new Trend('http_req_duration_success');
 const httpReqDurationFail = new Trend('http_req_duration_fail');
 
 // Placeholder arrays to be replaced dynamically
-const endpointsList = __ENDPOINTS__;
+const endpointsList = new SharedArray('endpoints', () => __ENDPOINTS__);
 const vus = __VUS__;
 
 export const options = {
@@ -18,7 +19,7 @@ export function setup() {
   let response = http.get('https://infra.antrein5.cloud');
   let infra_mode = JSON.parse(response.body).infra_mode;
   let be_mode = JSON.parse(response.body).be_mode;
-  
+
   return { infra_mode, be_mode };
 }
 
@@ -43,18 +44,18 @@ function runBatchRequests(endpoint, be_mode) {
   };
 
   // Extract project_id from endpoint
-  const project_id = endpoint.match(/https:\/\/(.+)\.antrein\.cloud/)[1];
+  const project_id = endpoint.match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1];
 
-  // Fire the additional request to api.antrein.com
-  const queueResponse = http.get(`https://api.antrein.com/${be_mode}/queue/register?project_id=${project_id}`, params);
-  recordDuration(queueResponse, `https://api.antrein.com/${be_mode}/queue/register?project_id=${project_id}`);
+  // Fire the additional request to api.antrein5.cloud
+  const queueResponse = http.get(`https://${project_id}.api.antrein5.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
+  recordDuration(queueResponse, `https://${project_id}.api.antrein5.cloud/${be_mode}/queue/register?project_id=${project_id}`, project_id);
 
   // Fire the main request to the project endpoint
   const response = http.get(endpoint, params);
-  recordDuration(response, endpoint);
+  recordDuration(response, endpoint, project_id);
 }
 
-function recordDuration(response, endpoint) {
+function recordDuration(response, endpoint, project_id) {
   const isSuccess = check(response, {
     'status was 200': (r) => r.status === 200,
   });
@@ -64,12 +65,12 @@ function recordDuration(response, endpoint) {
     httpReqDurationSuccess.add(response.timings.duration);
   } else {
     httpReqDurationFail.add(response.timings.duration);
-    logError(response, endpoint);
+    logStatus(endpoint, 'fail', response.status, project_id);
   }
 }
 
-function logError(response, endpoint) {
+function logStatus(endpoint, status, httpStatus, project_id) {
   const datetime = new Date().toISOString();
-  const errorMessage = `Error: ${response.status} ${response.statusText}`;
-  console.error(`${datetime}, ${endpoint}, ${errorMessage}`);
+  const message = `Project ID: ${project_id}, Endpoint: ${endpoint}, Status: ${status}, HTTP Status: ${httpStatus}`;
+  console.log(`${datetime} - ${message}`);
 }

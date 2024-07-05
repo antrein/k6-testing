@@ -23,7 +23,7 @@ export function setup() {
   let response = http.get('https://infra.antrein5.cloud');
   let infra_mode = JSON.parse(response.body).infra_mode;
   let be_mode = JSON.parse(response.body).be_mode;
-  
+
   return { infra_mode, be_mode };
 }
 
@@ -49,7 +49,7 @@ function runBatchRequests(endpoint, infra_mode, be_mode) {
   };
 
   // Extract project_id from endpoint
-  const project_id = endpoint.match(/https:\/\/(.+)\.antrein\.cloud/)[1];
+  const project_id = endpoint.match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1];
 
   // Fire the additional request to api.antrein5.cloud
   const queueResponse = http.get(`https://api.antrein5.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
