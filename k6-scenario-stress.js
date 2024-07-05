@@ -18,10 +18,14 @@ export const options = {
   },
 };
 
-// Fetch infra_mode and be_mode from the endpoint
-let response = http.get('https://infra.antrein5.cloud');
-let infra_mode = JSON.parse(response.body).infra_mode;
-let be_mode = JSON.parse(response.body).be_mode;
+// Setup function to fetch `infra_mode` and `be_mode`
+export function setup() {
+  let response = http.get('https://infra.antrein5.cloud');
+  let infra_mode = JSON.parse(response.body).infra_mode;
+  let be_mode = JSON.parse(response.body).be_mode;
+  
+  return { infra_mode, be_mode };
+}
 
 // Define individual scenario functions dynamically
 endpointsList.forEach((endpoint, index) => {
@@ -34,12 +38,12 @@ endpointsList.forEach((endpoint, index) => {
   };
 
   // Dynamically create the function
-  exports[`scenario_${index + 1}`] = function () {
-    runBatchRequests(endpoint);
+  exports[`scenario_${index + 1}`] = function (data) {
+    runBatchRequests(endpoint, data.infra_mode, data.be_mode);
   };
 });
 
-function runBatchRequests(endpoint) {
+function runBatchRequests(endpoint, infra_mode, be_mode) {
   let params = {
     timeout: '3000s',
   };
