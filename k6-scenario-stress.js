@@ -3,7 +3,6 @@ import { check, sleep } from 'k6';
 import { Trend } from 'k6/metrics';
 import { SharedArray } from 'k6/data';
 
-// Define custom trends for success and failure durations
 const httpReqDurationSuccess = new Trend('http_req_duration_success');
 const httpReqDurationFail = new Trend('http_req_duration_fail');
 
@@ -12,7 +11,7 @@ const endpointsList = new SharedArray('endpoints', () => [
   "https://demo1.antrein7.cloud"
 ]);
 const minVUs = 100; // Starting point
-const maxVUs = 10000; // Example max value, can be adjusted
+const maxVUs = 20000; // Maximum value
 
 export const options = {
   scenarios: {
@@ -21,13 +20,13 @@ export const options = {
       startVUs: minVUs,
       stages: [
         { duration: '10s', target: Math.floor(maxVUs * 0.1) },  // Ramp up to 10% of max VUs
-        { duration: '10s', target: Math.floor(maxVUs * 0.25) },  // Ramp up to 25% of max VUs
+        { duration: '10s', target: Math.floor(maxVUs * 0.25) }, // Ramp up to 25% of max VUs
         { duration: '10s', target: Math.floor(maxVUs * 0.5) },  // Ramp up to 50% of max VUs
-        { duration: '10s', target: Math.floor(maxVUs * 0.75) },  // Ramp up to 75% of max VUs
+        { duration: '10s', target: Math.floor(maxVUs * 0.75) }, // Ramp up to 75% of max VUs
         { duration: '10s', target: maxVUs },                    // Ramp up to max VUs
-        { duration: '10s', target: maxVUs },                    // Hold at max VUs for 1 minute
+        { duration: '10s', target: maxVUs },                    // Hold at max VUs for 10 seconds
       ],
-      gracefulStop: '10s',
+      gracefulStop: '30s',
     },
   },
   thresholds: {
@@ -40,7 +39,6 @@ export function setup() {
   let response = http.get('https://infra.antrein7.cloud');
   let infra_mode = JSON.parse(response.body).infra_mode;
   let be_mode = JSON.parse(response.body).be_mode;
-
   return { infra_mode, be_mode };
 }
 
@@ -50,33 +48,23 @@ export default function (data) {
   });
 
   checkSuccessRate();
-
-  sleep(1); // Pause between iterations
+  sleep(1);
 }
 
 function runBatchRequests(endpoint, be_mode) {
-  let params = {
-    timeout: '3000s',
-  };
-
-  // Extract project_id from endpoint
+  let params = { timeout: '3000s' };
   const project_id = endpoint.match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1];
 
-  // Fire the additional request to api.antrein7.cloud
   const queueResponse = http.get(`https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
   recordDuration(queueResponse, `https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`, project_id);
 
-  // Fire the main request to the project endpoint
   const response = http.get(endpoint, params);
   recordDuration(response, endpoint, project_id);
 }
 
 function recordDuration(response, endpoint, project_id) {
-  const isSuccess = check(response, {
-    'status was 200': (r) => r.status === 200,
-  });
+  const isSuccess = check(response, { 'status was 200': (r) => r.status === 200 });
 
-  // Record metrics for successful and failed requests separately
   if (response.status === 200) {
     httpReqDurationSuccess.add(response.timings.duration);
   } else {
@@ -98,7 +86,6 @@ function checkSuccessRate() {
 
   if (successRate < 20) {
     console.error(`Success rate fell below 20%: ${successRate}%`);
-    // Implement logic to stop the test, such as throwing an error or stopping the iteration.
     throw new Error('Success rate fell below 20%, stopping test.');
   }
 }
