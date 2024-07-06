@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const minVUs = 1000;
+const minVUs = 10000;
 const maxVUs = 20000;
 const stepVUs = 1000;
 const endpoint = "https://demo1.antrein7.cloud";
