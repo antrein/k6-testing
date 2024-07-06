@@ -311,6 +311,7 @@ for project_count in "${scenario_number_of_project[@]}"; do
   clear_projects
   echo "Creating resources for $project_count projects"
   for ((i=1; i<=project_count; i++)); do
+    check_server_health
     project_id="${ARTICLE}${project_count}${i}"
     create_and_configure_project $project_id
   done
@@ -326,6 +327,7 @@ for project_count in "${scenario_number_of_project[@]}"; do
   echo "Run k6 testing for $project_count projects"
   project_urls=($(gather_project_urls $project_count $project_count))
   for vus_count in "${scenario_number_of_vus[@]}"; do
+    check_server_health
     send_test_request "$vus_count" "${project_urls[@]}"
     echo "Pausing 10 seconds between testing scenarios"
     sleep 10
@@ -336,7 +338,7 @@ for project_count in "${scenario_number_of_project[@]}"; do
     echo "Run k6 stress testing for 1 project"
     for vus_count in "${stress_vus[@]}"; do
       check_server_health
-      
+
       project_urls=($(gather_project_urls $project_count $project_count))
       send_stress_test_request "$vus_count" "${project_urls[@]}"
       case $? in
