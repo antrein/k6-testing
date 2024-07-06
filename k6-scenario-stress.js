@@ -23,7 +23,7 @@ endpointsList.forEach((endpoint, index) => {
   };
 
   exports[`scenario_${index + 1}`] = function (data) {
-    runBatchRequests(endpoint, data.be_mode);
+    runBatchRequests(endpoint, be_mode);
   };
 });
 
