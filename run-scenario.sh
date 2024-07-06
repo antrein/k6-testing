@@ -244,8 +244,8 @@ send_stress_test_request() {
       be_mode: $be_mode
     }')
 
-  echo "Request payload:"
-  echo "$json_payload"
+  echo "request payload"
+  echo $json_payload
 
   response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$K6_TEST_STRESS_URL" -H "Content-Type: application/json" -d "$json_payload")
   http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
@@ -257,6 +257,7 @@ send_stress_test_request() {
     echo "Error: Received HTTP status code $http_code"
     return 1
   fi
+  echo ""
 }
 
 # Main script
@@ -313,10 +314,5 @@ for project_count in "${scenario_number_of_project[@]}"; do
       echo "Pausing 10 seconds between stress testing scenarios"
       sleep 10
     done
-
-    # If stress testing failed, break out of the loop
-    if [ "$stress_test_failed" = true ]; then
-      break
-    fi
   fi
 done
