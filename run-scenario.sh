@@ -16,7 +16,7 @@ scenario_number_of_vus=(
   "100"
   "500"
   "1000"
-  "3000"
+  "2000"
 )
 
 # Stress testing VUs
