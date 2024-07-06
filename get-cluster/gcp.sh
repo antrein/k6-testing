@@ -1,4 +1,6 @@
-# Fixed configuration variables
+#!/bin/bash
+
+# Configuration variables
 CLUSTER_NAME="antrein"
 ZONE="asia-southeast1-a"
 PROJECT="antrein-ta"
@@ -13,7 +15,7 @@ gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE --project $
 # Get cluster details
 cluster_details=$(gcloud container clusters describe $CLUSTER_NAME --zone $ZONE --format="json" --project $PROJECT)
 
-# Get the node pool name
+# Get the node pool names
 node_pools=$(echo $cluster_details | jq -r '.nodePools[].name')
 
 # Initialize totals
@@ -49,4 +51,4 @@ for node_pool in $node_pools; do
 done
 
 # Output the cluster specs
-echo "$total_nodes $num_cpus_per_node $memory_gb_per_node"
+echo "$total_nodes $total_cpus $total_memory_gb"
