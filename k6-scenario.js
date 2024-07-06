@@ -64,11 +64,11 @@ endpointsList.forEach((endpoint, index) => {
 
   // Dynamically create the function
   exports[`scenario_${index + 1}`] = function (data) {
-    runBatchRequests(endpoint, data.be_mode);
+    runBatchRequests(endpoint, data.infra_mode, data.be_mode);
   };
 });
 
-function runBatchRequests(endpoint, be_mode) {
+function runBatchRequests(endpoint, infra_mode, be_mode) {
   let params = {
     timeout: '3000s',
   };
@@ -76,14 +76,23 @@ function runBatchRequests(endpoint, be_mode) {
   // Extract project_id from endpoint
   const project_id = endpoint.match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1];
 
-  // Fire the additional request to api.antrein7.cloud
-  const queueResponse = http.get(`https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
-  recordDuration(queueResponse, `https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`, project_id);
+  // Determine the registration URL based on infra_mode
+  let register_url;
+  if (infra_mode === 'multi') {
+    register_url = `https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`;
+  } else if (infra_mode === 'shared') {
+    register_url = `https://api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`;
+  }
+
+  // Fire the additional request to the determined registration URL
+  const queueResponse = http.get(register_url, params);
+  recordDuration(queueResponse, register_url, project_id);
 
   // Fire the main request to the project endpoint
   const response = http.get(endpoint, params);
   recordDuration(response, endpoint, project_id);
 }
+
 
 function recordDuration(response, endpoint, project_id) {
   const isSuccess = check(response, {
