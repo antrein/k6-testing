@@ -36,6 +36,7 @@ EMAIL="riandyhsn@gmail.com"
 PASSWORD="babiguling123"
 K6_TEST_URL="http://localhost:3001/test"
 K6_TEST_STRESS_URL="http://localhost:3001/test-stress"
+K6_PUSH_STRESS_URL="http://localhost:3001/push-test-stress"
 HTML_HOST="demo-ticketing.site"
 THRESHOLD=2
 SESSION_TIME=1
