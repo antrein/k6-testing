@@ -339,33 +339,41 @@ for project_count in "${scenario_number_of_project[@]}"; do
   done
 
   # Run stress testing only when the project count is 1
-  if [ "$project_count" -eq 1 ]; then
-    echo "Run k6 stress testing for 1 project"
-    for vus_count in "${stress_vus[@]}"; do
-      check_server_health
+if [ "$project_count" -eq 1 ]; then
+  echo "Run k6 stress testing for 1 project"
+  for vus_count in "${stress_vus[@]}"; do
+    check_server_health
 
-      project_urls=($(gather_project_urls $project_count $project_count))
-      send_stress_test_request "$vus_count" "${project_urls[@]}"
-      case $? in
-        0)
-          # Passed
-          echo "Stress test passed, continue to next scenario."
-          ;;
-        1)
-          # Failed
-          echo "Stress testing stopped due to failure."
-          break
-          ;;
-        2)
-          # Error
-          echo "Error occurred, exiting."
-          exit 1
-          ;;
-      esac
-      echo "Pausing 10 seconds between stress testing scenarios"
-      sleep 10
-    done
-  fi
+    project_urls=($(gather_project_urls $project_count $project_count))
+    send_stress_test_request "$vus_count" "${project_urls[@]}"
+    case $? in
+      0)
+        # Passed
+        echo "Stress test passed, continue to next scenario."
+        ;;
+      1)
+        # Failed
+        echo "Stress testing stopped due to failure."
+        break
+        ;;
+      2)
+        # Error
+        echo "Error occurred, exiting."
+        exit 1
+        ;;
+    esac
+    echo "Pausing 10 seconds between stress testing scenarios"
+    sleep 10
+  done
+
+  # Pause for 60 seconds to ramp down
+  echo "Pausing for 60 seconds to ramp down after stress testing"
+  for ((i=0; i<60; i++)); do
+    echo -ne "Ramping down, please wait... $((60-i))\r"
+    sleep 1
+  done
+  echo -ne '\n'
+fi
 done
 echo " "
 echo "TEST FINISHED"
