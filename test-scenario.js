@@ -130,6 +130,7 @@ app.post('/test-stress', (req, res) => {
 
   const k6ScriptPath = path.join(__dirname, 'k6-scenario.js');
   const tempScriptPath = path.join(__dirname, 'temp_k6_script.js');
+  const resultTempPath = path.join(__dirname, 'result-stress-temp.json');
 
   // Read the k6 script template
   let k6Script = fs.readFileSync(k6ScriptPath, 'utf8');
@@ -148,7 +149,7 @@ app.post('/test-stress', (req, res) => {
   const logFilePath = path.join(__dirname, 'k6-error-logs.txt');
 
   // Execute the k6 test using the generated script and save output as JSON, capturing stderr
-  exec(`k6 run ${tempScriptPath} --summary-export output.json 2>> ${logFilePath}`, { maxBuffer: 1024 * 1024 * 20 }, async (error, stdout, stderr) => {
+  exec(`k6 run ${tempScriptPath} --summary-export ${resultTempPath} 2>> ${logFilePath}`, { maxBuffer: 1024 * 1024 * 20 }, async (error, stdout, stderr) => {
     // Capture the end time
     const endTime = moment().utc().format();
 
@@ -164,7 +165,7 @@ app.post('/test-stress', (req, res) => {
     console.error(`stderr: ${stderr}`);
 
     // Read the JSON output and upload necessary data to Google Sheets
-    fs.readFile('output.json', 'utf8', async (err, data) => {
+    fs.readFile(resultTempPath, 'utf8', async (err, data) => {
       if (err) {
         console.error(`readFile error: ${err}`);
         return res.status(500).send(`Error reading output file: ${err}`);
@@ -193,37 +194,42 @@ app.post('/test-stress', (req, res) => {
 
         const [maxCpu, maxMemory] = monStdout.trim().split('\n').map(line => line.split(': ')[1]);
 
-        try {
-          const sheets = await getSheetsClient();
-          const status = successRate >= 20 ? 'success' : 'failed';
-          const values = [
-            [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, virtualUsers, successRate.toFixed(2), status],
-          ];
+        const status = successRate >= 20 ? 'success' : 'failed';
 
-          const resource = {
-            values,
-          };
+        if (status === 'failed') {
+          try {
+            const sheets = await getSheetsClient();
+            const values = [
+              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, virtualUsers, successRate.toFixed(2), status],
+            ];
 
-          sheets.spreadsheets.values.append(
-            {
-              spreadsheetId: SHEET_ID,
-              range: `stress!A1`,
-              valueInputOption: 'RAW',
-              resource,
-            },
-            (err, result) => {
-              if (err) {
-                console.error(`Google Sheets API error: ${err}`);
-                return res.status(500).send(`Error updating Google Sheet: ${err}`);
-              } else {
-                console.log(`${result.data.updates.updatedCells} cells updated.`);
-                res.status(200).send('Test completed and data uploaded to Google Sheets.');
+            const resource = {
+              values,
+            };
+
+            sheets.spreadsheets.values.append(
+              {
+                spreadsheetId: SHEET_ID,
+                range: `stress!A1`,
+                valueInputOption: 'RAW',
+                resource,
+              },
+              (err, result) => {
+                if (err) {
+                  console.error(`Google Sheets API error: ${err}`);
+                  return res.status(500).send(`Error updating Google Sheet: ${err}`);
+                } else {
+                  console.log(`${result.data.updates.updatedCells} cells updated.`);
+                  res.status(200).send('Test completed and data uploaded to Google Sheets.');
+                }
               }
-            }
-          );
-        } catch (err) {
-          console.error(`Google Sheets API error: ${err}`);
-          return res.status(500).send(`Error authenticating with Google Sheets: ${err}`);
+            );
+          } catch (err) {
+            console.error(`Google Sheets API error: ${err}`);
+            return res.status(500).send(`Error authenticating with Google Sheets: ${err}`);
+          }
+        } else {
+          res.status(200).send('Stress test completed but no failure detected.');
         }
       });
     });

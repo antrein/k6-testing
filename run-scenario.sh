@@ -42,10 +42,30 @@ QUEUE_END="2024-07-03T23:59:59"
 
 # Function to fetch infra_mode and be_mode
 fetch_infra_mode_and_be_mode() {
-  local response=$(curl -s https://infra.antrein7.cloud)
-  local infra_mode=$(echo $response | jq -r '.infra_mode')
-  local be_mode=$(echo $response | jq -r '.be_mode')
-  echo $infra_mode $be_mode
+  local max_retries=50
+  local retry_count=0
+  local success=false
+  
+  while [ $retry_count -lt $max_retries ]; do
+    local response=$(curl -s https://infra.antrein7.cloud)
+    if [ $? -eq 0 ]; then
+      local infra_mode=$(echo $response | jq -r '.infra_mode')
+      local be_mode=$(echo $response | jq -r '.be_mode')
+      if [[ -n "$infra_mode" && -n "$be_mode" ]]; then
+        echo $infra_mode $be_mode
+        success=true
+        break
+      fi
+    fi
+    echo "Retry $((retry_count+1))/$max_retries: Failed to fetch infra_mode and be_mode. Retrying in 5 seconds..."
+    retry_count=$((retry_count + 1))
+    sleep 5
+  done
+
+  if [ "$success" = false ]; then
+    echo "Failed to fetch infra_mode and be_mode after $max_retries attempts. Exiting."
+    exit 1
+  fi
 }
 
 # Fetch infra_mode and be_mode

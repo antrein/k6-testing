@@ -11,9 +11,43 @@ const httpReqDurationFail = new Trend('http_req_duration_fail');
 const endpointsList = new SharedArray('endpoints', () => __ENDPOINTS__);
 const vus = __VUS__;
 
-export const options = {
-  scenarios: {},
-};
+// Function to fetch infra_mode and be_mode with retry logic
+function fetchInfraAndBeMode() {
+  const maxRetries = 30;
+  let retryCount = 0;
+  let success = false;
+  let infra_mode, be_mode;
+
+  while (retryCount < maxRetries && !success) {
+    let response = http.get('https://infra.antrein7.cloud');
+    if (response.status === 200) {
+      try {
+        infra_mode = JSON.parse(response.body).infra_mode;
+        be_mode = JSON.parse(response.body).be_mode;
+        success = true;
+      } catch (e) {
+        console.error(`Error parsing response body: ${e}`);
+      }
+    }
+
+    if (!success) {
+      retryCount++;
+      console.log(`Retry ${retryCount}/${maxRetries}: Failed to fetch infra_mode and be_mode. Retrying in 5 seconds...`);
+      sleep(5);
+    }
+  }
+
+  if (!success) {
+    console.error("Failed to fetch infra_mode and be_mode after maximum retries. Exiting.");
+    throw new Error("Failed to fetch infra_mode and be_mode after maximum retries.");
+  }
+
+  return { infra_mode, be_mode };
+}
+
+export function setup() {
+  return fetchInfraAndBeMode();
+}
 
 export function setup() {
   let response = http.get('https://infra.antrein7.cloud');
