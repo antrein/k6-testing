@@ -7,24 +7,27 @@ import { SharedArray } from 'k6/data';
 const httpReqDurationSuccess = new Trend('http_req_duration_success');
 const httpReqDurationFail = new Trend('http_req_duration_fail');
 
-// Placeholder arrays to be replaced dynamically
-const endpointsList = new SharedArray('endpoints', () => __ENDPOINTS__);
-const initialVUs = 10; // Starting point
-const maxVUs = 1500; // Example max value, can be adjusted
+// Directly set endpoints and VUs for local testing
+const endpointsList = new SharedArray('endpoints', () => [
+  "https://demo1.antrein7.cloud"
+]);
+const minVUs = 100; // Starting point
+const maxVUs = 10000; // Example max value, can be adjusted
 
 export const options = {
   scenarios: {
     stress_test: {
       executor: 'ramping-vus',
-      startVUs: initialVUs,
+      startVUs: minVUs,
       stages: [
-        { duration: '2m', target: Math.floor(maxVUs * 0.01) },  // Ramp up to 1% of max VUs
-        { duration: '2m', target: Math.floor(maxVUs * 0.1) },   // Ramp up to 10% of max VUs
-        { duration: '2m', target: Math.floor(maxVUs * 0.25) },  // Ramp up to 25% of max VUs
-        { duration: '2m', target: Math.floor(maxVUs * 0.5) },   // Ramp up to 50% of max VUs
-        { duration: '2m', target: Math.floor(maxVUs * 0.75) },  // Ramp up to 75% of max VUs
-        { duration: '2m', target: maxVUs },                    // Ramp up to max VUs
+        { duration: '10s', target: Math.floor(maxVUs * 0.1) },  // Ramp up to 10% of max VUs
+        { duration: '10s', target: Math.floor(maxVUs * 0.25) },  // Ramp up to 25% of max VUs
+        { duration: '10s', target: Math.floor(maxVUs * 0.5) },  // Ramp up to 50% of max VUs
+        { duration: '10s', target: Math.floor(maxVUs * 0.75) },  // Ramp up to 75% of max VUs
+        { duration: '10s', target: maxVUs },                    // Ramp up to max VUs
+        { duration: '10s', target: maxVUs },                    // Hold at max VUs for 1 minute
       ],
+      gracefulStop: '10s',
     },
   },
   thresholds: {
@@ -42,9 +45,11 @@ export function setup() {
 }
 
 export default function (data) {
-  const endpoint = __ENDPOINT__; // Placeholder for a single endpoint
-  
-  runBatchRequests(endpoint, data.be_mode);
+  endpointsList.forEach((endpoint) => {
+    runBatchRequests(endpoint, data.be_mode);
+  });
+
+  checkSuccessRate();
 
   sleep(1); // Pause between iterations
 }
@@ -86,15 +91,14 @@ function logStatus(endpoint, status, httpStatus, project_id) {
   console.log(`${datetime} - ${message}`);
 }
 
-function monitorSuccessRate() {
-  let successRequests = __ITER - httpReqDurationFail.count;
-  let successRate = (successRequests / __ITER) * 100;
+function checkSuccessRate() {
+  const totalRequests = httpReqDurationSuccess.count + httpReqDurationFail.count;
+  const successRequests = httpReqDurationSuccess.count;
+  const successRate = (successRequests / totalRequests) * 100;
 
   if (successRate < 20) {
     console.error(`Success rate fell below 20%: ${successRate}%`);
-    // Implement logic to stop the test, such as calling a function or API to halt execution.
-    // k6 currently doesn't support dynamic test stopping within the test script.
+    // Implement logic to stop the test, such as throwing an error or stopping the iteration.
+    throw new Error('Success rate fell below 20%, stopping test.');
   }
 }
-
-setInterval(monitorSuccessRate, 60000); // Check success rate every minute
