@@ -2,6 +2,7 @@ import http from 'k6/http';
 import { check } from 'k6';
 import { Trend } from 'k6/metrics';
 import { SharedArray } from 'k6/data';
+import { sleep } from 'k6';
 
 // Define custom trends for success and failure durations
 const httpReqDurationSuccess = new Trend('http_req_duration_success');
