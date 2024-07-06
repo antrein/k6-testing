@@ -1,49 +1,55 @@
 import http from 'k6/http';
-import { check, group, sleep } from 'k6';
+import { check, sleep } from 'k6';
 import { Trend } from 'k6/metrics';
+import { SharedArray } from 'k6/data';
 
 // Define custom trends for success and failure durations
 const httpReqDurationSuccess = new Trend('http_req_duration_success');
 const httpReqDurationFail = new Trend('http_req_duration_fail');
 
 // Placeholder arrays to be replaced dynamically
-const endpointsList = __ENDPOINTS__;
+const endpointsList = new SharedArray('endpoints', () => __ENDPOINTS__);
+const initialVUs = 10; // Starting point
+const maxVUs = 1500; // Example max value, can be adjusted
 
 export const options = {
-  scenarios: {},
+  scenarios: {
+    stress_test: {
+      executor: 'ramping-vus',
+      startVUs: initialVUs,
+      stages: [
+        { duration: '2m', target: Math.floor(maxVUs * 0.01) },  // Ramp up to 1% of max VUs
+        { duration: '2m', target: Math.floor(maxVUs * 0.1) },   // Ramp up to 10% of max VUs
+        { duration: '2m', target: Math.floor(maxVUs * 0.25) },  // Ramp up to 25% of max VUs
+        { duration: '2m', target: Math.floor(maxVUs * 0.5) },   // Ramp up to 50% of max VUs
+        { duration: '2m', target: Math.floor(maxVUs * 0.75) },  // Ramp up to 75% of max VUs
+        { duration: '2m', target: maxVUs },                    // Ramp up to max VUs
+      ],
+    },
+  },
   thresholds: {
-    'http_req_duration_success': ['p(95)<2000'], // 95% of successful requests should be under 2000ms
-    'http_req_duration_fail': ['p(95)<2000'], // 95% of failed requests should be under 2000ms
-    'http_req_failed': ['value<0.05'], // HTTP request failure rate should be less than 5%
+    'http_req_duration_success{status:200}': ['avg<1000'],
+    'http_req_duration_fail{status:200}': ['avg<1000'],
   },
 };
 
-// Setup function to fetch `infra_mode` and `be_mode`
 export function setup() {
-  let response = http.get('https://infra.antrein6.cloud');
+  let response = http.get('https://infra.antrein7.cloud');
   let infra_mode = JSON.parse(response.body).infra_mode;
   let be_mode = JSON.parse(response.body).be_mode;
 
   return { infra_mode, be_mode };
 }
 
-// Define individual scenario functions dynamically
-endpointsList.forEach((endpoint, index) => {
-  options.scenarios[`scenario_${index + 1}`] = {
-    executor: 'per-vu-iterations',
-    vus: 1, // Start with 1 VU
-    iterations: 1000000, // Large number to keep the VU running
-    maxDuration: '30m', // Maximum duration for each scenario
-    exec: `scenario_${index + 1}`,
-  };
+export default function (data) {
+  const endpoint = __ENDPOINT__; // Placeholder for a single endpoint
+  
+  runBatchRequests(endpoint, data.be_mode);
 
-  // Dynamically create the function
-  exports[`scenario_${index + 1}`] = function (data) {
-    runBatchRequests(endpoint, data.infra_mode, data.be_mode);
-  };
-});
+  sleep(1); // Pause between iterations
+}
 
-function runBatchRequests(endpoint, infra_mode, be_mode) {
+function runBatchRequests(endpoint, be_mode) {
   let params = {
     timeout: '3000s',
   };
@@ -51,16 +57,16 @@ function runBatchRequests(endpoint, infra_mode, be_mode) {
   // Extract project_id from endpoint
   const project_id = endpoint.match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1];
 
-  // Fire the additional request to api.antrein6.cloud
-  const queueResponse = http.get(`https://api.antrein6.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
-  recordDuration(queueResponse, `https://api.antrein6.cloud/${be_mode}/queue/register?project_id=${project_id}`);
+  // Fire the additional request to api.antrein7.cloud
+  const queueResponse = http.get(`https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
+  recordDuration(queueResponse, `https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`, project_id);
 
   // Fire the main request to the project endpoint
   const response = http.get(endpoint, params);
-  recordDuration(response, endpoint);
+  recordDuration(response, endpoint, project_id);
 }
 
-function recordDuration(response, endpoint) {
+function recordDuration(response, endpoint, project_id) {
   const isSuccess = check(response, {
     'status was 200': (r) => r.status === 200,
   });
@@ -70,24 +76,25 @@ function recordDuration(response, endpoint) {
     httpReqDurationSuccess.add(response.timings.duration);
   } else {
     httpReqDurationFail.add(response.timings.duration);
-    logError(response, endpoint);
+    logStatus(endpoint, 'fail', response.status, project_id);
   }
 }
 
-function logError(response, endpoint) {
+function logStatus(endpoint, status, httpStatus, project_id) {
   const datetime = new Date().toISOString();
-  const errorMessage = `Error: ${response.status} ${response.statusText}`;
-  console.error(`${datetime}, ${endpoint}, ${errorMessage}`);
+  const message = `Project ID: ${project_id}, Endpoint: ${endpoint}, Status: ${status}, HTTP Status: ${httpStatus}`;
+  console.log(`${datetime} - ${message}`);
 }
 
-// Function to increase VUs gradually
-export function handleSummary(data) {
-  const currentVUs = options.scenarios[`scenario_1`].vus;
-  if (data.metrics.http_req_failed.value > 0.9) {
-    console.log(`System failed at ${currentVUs} VUs`);
-    return {};
-  } else {
-    options.scenarios[`scenario_1`].vus = currentVUs + 1;
-    console.log(`Increasing VUs to ${currentVUs + 1}`);
+function monitorSuccessRate() {
+  let successRequests = __ITER - httpReqDurationFail.count;
+  let successRate = (successRequests / __ITER) * 100;
+
+  if (successRate < 20) {
+    console.error(`Success rate fell below 20%: ${successRate}%`);
+    // Implement logic to stop the test, such as calling a function or API to halt execution.
+    // k6 currently doesn't support dynamic test stopping within the test script.
   }
 }
+
+setInterval(monitorSuccessRate, 60000); // Check success rate every minute

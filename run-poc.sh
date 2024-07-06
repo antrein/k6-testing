@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the URLs and VUs
-declare -a urls=("https://demo-ticketing.site/" "https://demo1.antrein6.cloud/")
+declare -a urls=("https://demo-ticketing.site/" "https://demo1.antrein7.cloud/")
 declare -a vus=("10"  "100" "300" "500" "1000" "3000" "5000" "10000")
 
 # Loop through each URL and VU combination and make the POST request
