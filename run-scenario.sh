@@ -21,8 +21,6 @@ scenario_number_of_vus=(
 
 # Stress testing VUs
 stress_vus=(
-  "14000"
-  "16000"
   "18000"
   "20000"
   "22000"
@@ -97,6 +95,19 @@ check_server_health() {
   if [ "$success" = false ]; then
     echo "Server health check failed after $max_retries attempts. Exiting."
     exit 1
+  fi
+}
+
+check_stress_test_health() {
+  local response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" https://infra.antrein6.cloud)
+  local http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
+  
+  if [ "$http_code" -eq 200 ]; then
+    echo "Server is healthy."
+    return 0
+  else
+    echo "Server health check failed with status code $http_code."
+    return 1
   fi
 }
 
@@ -293,6 +304,49 @@ send_stress_test_request() {
   fi
   echo ""
 }
+
+# Function to send data to /push-stress-test endpoint
+send_push_stress_test() {
+  local vus_per_endpoint=$1
+  shift
+  local project_urls=("$@")
+
+  local json_payload=$(jq -n \
+    --argjson endpoints "$(printf '%s\n' "${project_urls[@]}" | jq -R . | jq -s .)" \
+    --arg vus_per_endpoint "$vus_per_endpoint" \
+    --arg platform "$PLATFORM" \
+    --arg nodes "$NODES" \
+    --arg cpu "$CPU" \
+    --arg memory "$MEMORY" \
+    --arg infra_mode "$infra_mode" \
+    --arg be_mode "$be_mode" \
+    '{
+      vus_per_endpoint: $vus_per_endpoint,
+      endpoints: $endpoints,
+      platform: $platform,
+      nodes: $nodes,
+      cpu: $cpu,
+      memory: $memory,
+      infra_mode: $infra_mode,
+      be_mode: $be_mode
+    }')
+
+  echo "Sending data to /push-stress-test"
+  echo $json_payload
+
+  response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$K6_PUSH_STRESS_URL" -H "Content-Type: application/json" -d "$json_payload")
+  http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
+  
+  if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
+    echo "Data uploaded to Google Sheets."
+    return 0
+  else
+    echo "Error: Received HTTP status code $http_code"
+    return 1
+  fi
+}
+
+
 # Main script
 login
 
@@ -349,6 +403,10 @@ if [ "$project_count" -eq 1 ]; then
       0)
         # Passed
         echo "Stress test passed, continue to next scenario."
+        if ! check_stress_test_health; then
+          send_push_stress_test "$vus_count" "${project_urls[@]}"
+          break
+        fi
         ;;
       1)
         # Failed
