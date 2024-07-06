@@ -8,15 +8,15 @@ PLATFORM="gcp"
 scenario_number_of_project=(
   "1"
   "3"
-  "5"
+  # "5"
 )
 
 scenario_number_of_vus=(
   "1"
   "100"
-  "500"
-  "1000"
-  "3000"
+  # "500"
+  # "1000"
+  # "3000"
 )
 
 # Stress testing VUs
