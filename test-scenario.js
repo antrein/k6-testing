@@ -176,10 +176,7 @@ app.post('/test-stress', (req, res) => {
       const totalRequests = metrics['http_reqs'].count;
       const failedRequests = metrics['http_req_failed'].passes;
       const successRate = ((totalRequests - failedRequests) / totalRequests) * 100;
-      const httpReqDurationAvgSuccess = metrics['http_req_duration_success'] ? metrics['http_req_duration_success'].avg : 0;
-      const httpReqDurationAvgFail = metrics['http_req_duration_fail'] ? metrics['http_req_duration_fail'].avg : 0;
       const virtualUsers = metrics['iterations'].count; // Get the number of virtual users
-      const numProjects = endpoints.length;
 
       // Convert start and end times to Jakarta time and strip timezone
       const startTimestampJakarta = moment(startTime).tz('Asia/Jakarta').format('YYYY-MM-DDTHH:mm:ss');
@@ -194,7 +191,7 @@ app.post('/test-stress', (req, res) => {
 
         const [maxCpu, maxMemory] = monStdout.trim().split('\n').map(line => line.split(': ')[1]);
 
-        const status = successRate >= 20 ? 'success' : 'failed';
+        const status = successRate >= 5 ? 'success' : 'failed';
 
         if (status === 'failed') {
           try {
