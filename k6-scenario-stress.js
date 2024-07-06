@@ -6,12 +6,11 @@ import { SharedArray } from 'k6/data';
 const httpReqDurationSuccess = new Trend('http_req_duration_success');
 const httpReqDurationFail = new Trend('http_req_duration_fail');
 
-// Directly set endpoints and VUs for local testing
 const endpointsList = new SharedArray('endpoints', () => [
   "https://demo1.antrein7.cloud"
 ]);
-const minVUs = 100; // Starting point
-const maxVUs = 20000; // Maximum value
+const minVUs = 100;
+const maxVUs = 20000;
 
 export const options = {
   scenarios: {
@@ -19,12 +18,12 @@ export const options = {
       executor: 'ramping-vus',
       startVUs: minVUs,
       stages: [
-        { duration: '10s', target: Math.floor(maxVUs * 0.1) },  // Ramp up to 10% of max VUs
-        { duration: '10s', target: Math.floor(maxVUs * 0.25) }, // Ramp up to 25% of max VUs
-        { duration: '10s', target: Math.floor(maxVUs * 0.5) },  // Ramp up to 50% of max VUs
-        { duration: '10s', target: Math.floor(maxVUs * 0.75) }, // Ramp up to 75% of max VUs
-        { duration: '10s', target: maxVUs },                    // Ramp up to max VUs
-        { duration: '10s', target: maxVUs },                    // Hold at max VUs for 10 seconds
+        { duration: '10s', target: Math.floor(maxVUs * 0.1) },
+        { duration: '10s', target: Math.floor(maxVUs * 0.25) },
+        { duration: '10s', target: Math.floor(maxVUs * 0.5) },
+        { duration: '10s', target: Math.floor(maxVUs * 0.75) },
+        { duration: '10s', target: maxVUs },
+        { duration: '10s', target: maxVUs },
       ],
       gracefulStop: '30s',
     },
@@ -34,6 +33,10 @@ export const options = {
     'http_req_duration_fail{status:200}': ['avg<1000'],
   },
 };
+
+let totalRequests = 0;
+let successRequests = 0;
+let failedRequests = 0;
 
 export function setup() {
   let response = http.get('https://infra.antrein7.cloud');
@@ -52,7 +55,7 @@ export default function (data) {
 }
 
 function runBatchRequests(endpoint, be_mode) {
-  let params = { timeout: '3000s' };
+  let params = { timeout: '60s' }; // Increase timeout to 60 seconds
   const project_id = endpoint.match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1];
 
   const queueResponse = http.get(`https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
@@ -63,11 +66,14 @@ function runBatchRequests(endpoint, be_mode) {
 }
 
 function recordDuration(response, endpoint, project_id) {
+  totalRequests++;
   const isSuccess = check(response, { 'status was 200': (r) => r.status === 200 });
 
-  if (response.status === 200) {
+  if (isSuccess) {
+    successRequests++;
     httpReqDurationSuccess.add(response.timings.duration);
   } else {
+    failedRequests++;
     httpReqDurationFail.add(response.timings.duration);
     logStatus(endpoint, 'fail', response.status, project_id);
   }
@@ -88,4 +94,18 @@ function checkSuccessRate() {
     console.error(`Success rate fell below 20%: ${successRate}%`);
     throw new Error('Success rate fell below 20%, stopping test.');
   }
+}
+
+export function handleSummary(data) {
+  const successRate = (successRequests / totalRequests) * 100;
+
+  return {
+    stdout: `Test summary:
+    Total Requests: ${totalRequests}
+    Successful Requests: ${successRequests}
+    Failed Requests: ${failedRequests}
+    Success Rate: ${successRate.toFixed(2)}%
+    Avg Duration Success: ${httpReqDurationSuccess.avg}
+    Avg Duration Fail: ${httpReqDurationFail.avg}\n`,
+  };
 }
