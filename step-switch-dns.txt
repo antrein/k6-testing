@@ -1,0 +1,5 @@
+1. prepare dns, wait for propagate
+2. delete all resource from infra.antrein
+3. change base url in github
+4. change ingress in infra config
+5. change in k6-testing

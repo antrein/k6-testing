@@ -1,1 +1,1 @@
-time="2024-07-06T16:32:25+07:00" level=info msg="2024-07-06T09:32:25.333Z - Project ID: test511, Endpoint: https://test511.api.antrein7.cloud/bc/queue/register?project_id=test511, Status: fail, HTTP Status: 500" source=console
+time="2024-07-06T16:32:25+07:00" level=info msg="2024-07-06T09:32:25.333Z - Project ID: test511, Endpoint: https://test511.api.antrein6.cloud/bc/queue/register?project_id=test511, Status: fail, HTTP Status: 500" source=console

@@ -9,13 +9,15 @@ const moment = require('moment-timezone');
 const app = express();
 const port = 3001;
 
+const failedThreshold = 3
+
 const SHEET_ID = '1qtKIWwuslWP9ICPOF0Kkx74gdTuytFeWJn6gg2iBwsY'; // Replace with your Google Sheet ID
 
 app.use(bodyParser.json());
 
 function calculateMaxVirtualUser(successRate, virtualUsers) {
   // Calculate the max_virtual_user based on the given formula
-  let max_virtual_user = (virtualUsers - 2000) + ((virtualUsers - (virtualUsers - 2000)) * (successRate / 5));
+  let max_virtual_user = (virtualUsers - 2000) + ((virtualUsers - (virtualUsers - 2000)) * (successRate / failedThreshold));
   
   // Round the result to the nearest integer
   max_virtual_user = Math.round(max_virtual_user);
@@ -199,7 +201,7 @@ app.post('/test-stress', (req, res) => {
           return res.status(500).send(`Error running monitoring script: ${monError}`);
         }
 
-        const status = successRate >= 5 ? 'success' : 'failed';
+        const status = successRate >= failedThreshold ? 'success' : 'failed';
 
         if (status === 'failed') {
           try {
