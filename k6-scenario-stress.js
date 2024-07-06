@@ -8,18 +8,11 @@ const httpReqDurationFail = new Trend('http_req_duration_fail');
 
 const endpointsList = new SharedArray('endpoints', () => __ENDPOINTS__);
 const vus = __VUS__;
+const be_mode = "bc"
 
 export const options = {
   scenarios: {},
 };
-
-export function setup() {
-  let response = http.get('https://infra.antrein7.cloud');
-  let infra_mode = JSON.parse(response.body).infra_mode;
-  let be_mode = JSON.parse(response.body).be_mode;
-
-  return { infra_mode, be_mode };
-}
 
 endpointsList.forEach((endpoint, index) => {
   options.scenarios[`scenario_${index + 1}`] = {
