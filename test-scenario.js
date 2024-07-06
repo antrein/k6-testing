@@ -208,7 +208,7 @@ app.post('/test-stress', (req, res) => {
             const sheets = await getSheetsClient();
             const maxVirtualUsers = calculateMaxVirtualUser(successRate, virtualUsers)
             const values = [
-              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, maxVirtualUsers, status, successRate],
+              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, maxVirtualUsers, status],
             ];
 
             const resource = {
@@ -367,18 +367,17 @@ app.post('/push-test-stress', async (req, res) => {
   const endTimestampJakarta = moment(endTime).tz('Asia/Jakarta').format('YYYY-MM-DDTHH:mm:ss');
 
   const status = 'failed';
-  const virtualUsers = vus_per_endpoint;
-
-  const values = [
-    [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, virtualUsers, status],
-  ];
-
-  const resource = {
-    values,
-  };
 
   try {
     const sheets = await getSheetsClient();
+    const values = [
+      [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, vus_per_endpoint, status],
+    ];
+
+    const resource = {
+      values,
+    };
+
     sheets.spreadsheets.values.append(
       {
         spreadsheetId: SHEET_ID,
@@ -392,7 +391,7 @@ app.post('/push-test-stress', async (req, res) => {
           return res.status(500).send(`Error updating Google Sheet: ${err}`);
         } else {
           console.log(`${result.data.updates.updatedCells} cells updated.`);
-          return res.status(201).send({ message: 'Stress test failed and data uploaded to Google Sheets.', status });
+          res.status(200).send('Test completed and data uploaded to Google Sheets.');
         }
       }
     );
