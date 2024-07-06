@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration variables
-ARTICLE="test1"
+ARTICLE="test2"
 PLATFORM="gcp"
 
 # Scenarios: Number of projects and VUs per project
