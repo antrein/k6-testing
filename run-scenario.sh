@@ -21,12 +21,17 @@ scenario_number_of_vus=(
 
 # Stress testing VUs
 stress_vus=(
-  "10000"
   "12000"
   "14000"
   "16000"
   "18000"
   "20000"
+  "22000"
+  "24000"
+  "28000"
+  "32000"
+  "35000"
+  "40000"
 )
 
 # Variable
@@ -181,7 +186,7 @@ gather_project_urls() {
   local s=$2
   local project_urls=()
   for ((i=1; i<=num_projects; i++)); do
-    project_id="${ARTICLE}${s}${i}"
+    project_id="${ARTICLE}${NODES}${CPU}${MEMORY}${s}${i}"
     project_url="https://${project_id}.antrein7.cloud/"
     project_urls+=("$project_url")
   done
@@ -312,7 +317,7 @@ for project_count in "${scenario_number_of_project[@]}"; do
   echo "Creating resources for $project_count projects"
   for ((i=1; i<=project_count; i++)); do
     check_server_health
-    project_id="${ARTICLE}${project_count}${i}"
+    project_id="${ARTICLE}${NODES}${CPU}${MEMORY}${project_count}${i}"
     create_and_configure_project $project_id
   done
 
