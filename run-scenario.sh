@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Configuration variables
-ARTICLE="test2"
+ARTICLE="testing1"
 PLATFORM="gcp"
 
 # Scenarios: Number of projects and VUs per project
 scenario_number_of_project=(
   "1"
   "3"
-  # "5"
+  "5"
 )
 
 scenario_number_of_vus=(
@@ -362,3 +362,6 @@ for project_count in "${scenario_number_of_project[@]}"; do
     done
   fi
 done
+echo " "
+echo "TEST FINISHED"
+echo " "
