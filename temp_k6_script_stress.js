@@ -6,8 +6,8 @@ import { SharedArray } from 'k6/data';
 const httpReqDurationSuccess = new Trend('http_req_duration_success');
 const httpReqDurationFail = new Trend('http_req_duration_fail');
 
-const endpointsList = new SharedArray('endpoints', () => __ENDPOINTS__);
-const vus = __VUS__;
+const endpointsList = new SharedArray('endpoints', () => ["https://demo1.antrein7.cloud"]);
+const vus = 5000;
 
 export const options = {
   scenarios: {},
