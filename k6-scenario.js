@@ -49,13 +49,6 @@ export function setup() {
   return fetchInfraAndBeMode();
 }
 
-export function setup() {
-  let response = http.get('https://infra.antrein7.cloud');
-  let infra_mode = JSON.parse(response.body).infra_mode;
-  let be_mode = JSON.parse(response.body).be_mode;
-
-  return { infra_mode, be_mode };
-}
 
 // Define individual scenario functions dynamically
 endpointsList.forEach((endpoint, index) => {
