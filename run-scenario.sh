@@ -16,13 +16,23 @@ scenario_number_of_vus=(
   "100"
   "500"
   "1000"
-  "5000"
+  "3000"
+)
+
+# Stress testing VUs
+stress_vus=(
+  "1000"
+  "1300"
+  "15000"
+  "17000"
+  "20000"
 )
 
 # Variable
 EMAIL="riandyhsn@gmail.com"
 PASSWORD="babiguling123"
 K6_TEST_URL="http://localhost:3001/test"
+K6_TEST_STRESS_URL="http://localhost:3001/test-stress"
 HTML_HOST="demo-ticketing.site"
 THRESHOLD=2
 SESSION_TIME=1
@@ -186,6 +196,47 @@ clear_projects() {
   echo -e "\nAll projects cleared."
 }
 
+# Function to send stress test request to the local server
+send_stress_test_request() {
+  echo "Creating stress test request"
+  local vus_per_endpoint=$1
+  shift
+  local project_urls=("$@")
+
+  local json_payload=$(jq -n \
+    --argjson endpoints "$(printf '%s\n' "${project_urls[@]}" | jq -R . | jq -s .)" \
+    --arg vus_per_endpoint "$vus_per_endpoint" \
+    --arg platform "$PLATFORM" \
+    --arg nodes "$NODES" \
+    --arg cpu "$CPU" \
+    --arg memory "$MEMORY" \
+    --arg infra_mode "$infra_mode" \
+    --arg be_mode "$be_mode" \
+    '{
+      vus_per_endpoint: $vus_per_endpoint,
+      endpoints: $endpoints,
+      platform: $platform,
+      nodes: $nodes,
+      cpu: $cpu,
+      memory: $memory,
+      infra_mode: $infra_mode,
+      be_mode: $be_mode
+    }')
+
+  echo "request payload"
+  echo $json_payload
+
+  response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$K6_TEST_STRESS_URL" -H "Content-Type: application/json" -d "$json_payload")
+  http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
+  
+  if [ "$http_code" -eq 200 ]; then
+    echo "Stress test completed and data uploaded to Google Sheets."
+  else
+    echo "Error: Received HTTP status code $http_code"
+  fi
+  echo ""
+}
+
 # Main script
 login
 
@@ -200,7 +251,7 @@ elif [ "$PLATFORM" == "azure" ]; then
   echo "Fetching Azure cluster details... (Not implemented yet)"
 fi
 
-# Run tests for each scenario
+# Run tests for each scenario and stress test for a single project
 for project_count in "${scenario_number_of_project[@]}"; do
   clear_projects
   echo "Creating resources for $project_count projects"
@@ -224,4 +275,15 @@ for project_count in "${scenario_number_of_project[@]}"; do
     echo "Pausing 10 seconds between testing scenarios"
     sleep 10
   done
+
+  # Run stress testing only when the project count is 1
+  if [ "$project_count" -eq 1 ]; then
+    echo "Run k6 stress testing for 1 project"
+    for vus_count in "${stress_vus[@]}"; do
+      project_urls=($(gather_project_urls $project_count $project_count))
+      send_stress_test_request "$vus_count" "${project_urls[@]}"
+      echo "Pausing 10 seconds between stress testing scenarios"
+      sleep 10
+    done
+  fi
 done
