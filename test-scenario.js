@@ -217,7 +217,7 @@ app.post('/test-stress', (req, res) => {
                   return res.status(500).send(`Error updating Google Sheet: ${err}`);
                 } else {
                   console.log(`${result.data.updates.updatedCells} cells updated.`);
-                  res.status(200).send('Test completed and data uploaded to Google Sheets.');
+                  return res.status(201).send({ message: 'Stress test failed and data uploaded to Google Sheets.', status });
                 }
               }
             );
@@ -226,7 +226,7 @@ app.post('/test-stress', (req, res) => {
             return res.status(500).send(`Error authenticating with Google Sheets: ${err}`);
           }
         } else {
-          res.status(200).send('Stress test completed but no failure detected.');
+          return res.status(200).send({ message: 'Stress test passed.', status });
         }
       });
     });

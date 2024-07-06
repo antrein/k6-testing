@@ -251,15 +251,17 @@ send_stress_test_request() {
   http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
   
   if [ "$http_code" -eq 200 ]; then
-    echo "Stress test completed and data uploaded to Google Sheets."
+    echo "Stress test passed, continue to next scenario."
     return 0
+  elif [ "$http_code" -eq 201 ]; then
+    echo "Stress test failed and data uploaded to Google Sheets."
+    return 1
   else
     echo "Error: Received HTTP status code $http_code"
-    return 1
+    return 2
   fi
   echo ""
 }
-
 # Main script
 login
 
@@ -302,15 +304,25 @@ for project_count in "${scenario_number_of_project[@]}"; do
   # Run stress testing only when the project count is 1
   if [ "$project_count" -eq 1 ]; then
     echo "Run k6 stress testing for 1 project"
-    stress_test_failed=false
     for vus_count in "${stress_vus[@]}"; do
       project_urls=($(gather_project_urls $project_count $project_count))
       send_stress_test_request "$vus_count" "${project_urls[@]}"
-      if [ $? -ne 0 ]; then
-        echo "Stress testing stopped due to failure."
-        stress_test_failed=true
-        break
-      fi
+      case $? in
+        0)
+          # Passed
+          echo "Stress test passed, continue to next scenario."
+          ;;
+        1)
+          # Failed
+          echo "Stress testing stopped due to failure."
+          break
+          ;;
+        2)
+          # Error
+          echo "Error occurred, exiting."
+          exit 1
+          ;;
+      esac
       echo "Pausing 10 seconds between stress testing scenarios"
       sleep 10
     done
