@@ -13,6 +13,16 @@ const SHEET_ID = '1qtKIWwuslWP9ICPOF0Kkx74gdTuytFeWJn6gg2iBwsY'; // Replace with
 
 app.use(bodyParser.json());
 
+function calculateMaxVirtualUser(successRate, virtualUsers) {
+  // Calculate the max_virtual_user based on the given formula
+  let max_virtual_user = (virtualUsers - 2000) + ((virtualUsers - (virtualUsers - 2000)) * (successRate / 5));
+  
+  // Round the result to the nearest integer
+  max_virtual_user = Math.round(max_virtual_user);
+  
+  return max_virtual_user;
+}
+
 app.post('/test', (req, res) => {
   const { vus_per_endpoint, endpoints, platform, nodes, cpu, memory, infra_mode, be_mode } = req.body;
 
@@ -189,15 +199,14 @@ app.post('/test-stress', (req, res) => {
           return res.status(500).send(`Error running monitoring script: ${monError}`);
         }
 
-        const [maxCpu, maxMemory] = monStdout.trim().split('\n').map(line => line.split(': ')[1]);
-
         const status = successRate >= 5 ? 'success' : 'failed';
 
         if (status === 'failed') {
           try {
             const sheets = await getSheetsClient();
+            const maxVirtualUsers = calculateMaxVirtualUser(successRate, virtualUsers)
             const values = [
-              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, virtualUsers, successRate.toFixed(2), status],
+              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, maxVirtualUsers, status],
             ];
 
             const resource = {

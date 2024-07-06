@@ -69,6 +69,33 @@ fetch_infra_mode_and_be_mode() {
   fi
 }
 
+# Function to check server health
+check_server_health() {
+  local max_retries=50
+  local retry_count=0
+  local success=false
+
+  while [ $retry_count -lt $max_retries ]; do
+    local response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" https://infra.antrein7.cloud)
+    local http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
+    
+    if [ "$http_code" -eq 200 ]; then
+      echo "Server is healthy."
+      success=true
+      break
+    else
+      echo "Server health check failed with status code $http_code. Retrying in 5 seconds..."
+      retry_count=$((retry_count + 1))
+      sleep 5
+    fi
+  done
+
+  if [ "$success" = false ]; then
+    echo "Server health check failed after $max_retries attempts. Exiting."
+    exit 1
+  fi
+}
+
 # Fetch infra_mode and be_mode
 infra_be_modes=($(fetch_infra_mode_and_be_mode))
 infra_mode=${infra_be_modes[0]}
@@ -278,6 +305,9 @@ fi
 
 # Run tests for each scenario and stress test for a single project
 for project_count in "${scenario_number_of_project[@]}"; do
+  # Check server health before starting the iteration
+  check_server_health
+
   clear_projects
   echo "Creating resources for $project_count projects"
   for ((i=1; i<=project_count; i++)); do
@@ -305,6 +335,8 @@ for project_count in "${scenario_number_of_project[@]}"; do
   if [ "$project_count" -eq 1 ]; then
     echo "Run k6 stress testing for 1 project"
     for vus_count in "${stress_vus[@]}"; do
+      check_server_health
+      
       project_urls=($(gather_project_urls $project_count $project_count))
       send_stress_test_request "$vus_count" "${project_urls[@]}"
       case $? in
