@@ -9,7 +9,7 @@ const moment = require('moment-timezone');
 const app = express();
 const port = 3001;
 
-const failedThreshold = 3
+const failedThreshold = 5
 
 const SHEET_ID = '1qtKIWwuslWP9ICPOF0Kkx74gdTuytFeWJn6gg2iBwsY'; // Replace with your Google Sheet ID
 
@@ -208,7 +208,7 @@ app.post('/test-stress', (req, res) => {
             const sheets = await getSheetsClient();
             const maxVirtualUsers = calculateMaxVirtualUser(successRate, virtualUsers)
             const values = [
-              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, maxVirtualUsers, status],
+              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, maxVirtualUsers, status, successRate],
             ];
 
             const resource = {
