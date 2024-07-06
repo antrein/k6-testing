@@ -76,9 +76,9 @@ function runBatchRequests(endpoint, be_mode) {
   // Extract project_id from endpoint
   const project_id = endpoint.match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1];
 
-  // Fire the additional request to api.antrein6.cloud
-  const queueResponse = http.get(`https://${project_id}.api.antrein6.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
-  recordDuration(queueResponse, `https://${project_id}.api.antrein6.cloud/${be_mode}/queue/register?project_id=${project_id}`, project_id);
+  // Fire the additional request to api.antrein7.cloud
+  const queueResponse = http.get(`https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`, params);
+  recordDuration(queueResponse, `https://${project_id}.api.antrein7.cloud/${be_mode}/queue/register?project_id=${project_id}`, project_id);
 
   // Fire the main request to the project endpoint
   const response = http.get(endpoint, params);
