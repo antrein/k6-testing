@@ -9,6 +9,9 @@ start:
 stop:
 	pm2 stop test-scenario.js
 
+check:
+	cat nohup.out
+
 krun:
 	k6 run index.js
 
