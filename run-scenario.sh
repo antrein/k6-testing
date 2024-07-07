@@ -74,7 +74,7 @@ fetch_infra_mode_and_be_mode() {
 
 # Function to check server health
 check_server_health() {
-  local max_retries=50
+  local max_retries=1000
   local retry_count=0
   local success=false
 
