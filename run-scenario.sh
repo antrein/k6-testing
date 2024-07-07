@@ -153,6 +153,7 @@ create_and_configure_project() {
 }
 EOF
   )
+  check_server_health
 
   CREATE_PROJECT_RESPONSE=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$BASE_URL/project" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "$CREATE_PROJECT_DATA")
   HTTP_STATUS=$(echo "$CREATE_PROJECT_RESPONSE" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
@@ -179,6 +180,8 @@ EOF
 EOF
   )
 
+  check_server_health
+  
   CONFIG_PROJECT_RESPONSE=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X PUT "$BASE_URL/project/config" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "$CONFIG_PROJECT_DATA")
   HTTP_STATUS=$(echo "$CONFIG_PROJECT_RESPONSE" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
   RESPONSE_BODY=$(echo "$CONFIG_PROJECT_RESPONSE" | sed '/HTTP_STATUS_CODE/d')
@@ -372,7 +375,6 @@ for project_count in "${scenario_number_of_project[@]}"; do
   clear_projects
   echo "Creating resources for $project_count projects"
   for ((i=1; i<=project_count; i++)); do
-    check_server_health
     project_id="${ARTICLE}${NODES}${CPU}${MEMORY}${project_count}${i}"
     create_and_configure_project $project_id
   done
