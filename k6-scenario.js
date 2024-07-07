@@ -24,7 +24,7 @@ function fetchInfraAndBeMode() {
   let infra_mode, be_mode;
 
   while (retryCount < maxRetries && !success) {
-    let response = http.get('https://infra.antrein8.cloud');
+    let response = http.get('https://infra.antrein9.cloud');
     if (response.status === 200) {
       try {
         infra_mode = JSON.parse(response.body).infra_mode;
@@ -80,9 +80,9 @@ function runBatchRequests(endpoint, infra_mode, be_mode) {
   // Determine the registration URL based on infra_mode
   let register_url;
   if (infra_mode === 'multi') {
-    register_url = `https://${project_id}.api.antrein8.cloud/${be_mode}/queue/register?project_id=${project_id}`;
+    register_url = `https://${project_id}.api.antrein9.cloud/${be_mode}/queue/register?project_id=${project_id}`;
   } else if (infra_mode === 'shared') {
-    register_url = `https://api.antrein8.cloud/${be_mode}/queue/register?project_id=${project_id}`;
+    register_url = `https://api.antrein9.cloud/${be_mode}/queue/register?project_id=${project_id}`;
   }
 
   // Fire the additional request to the determined registration URL
