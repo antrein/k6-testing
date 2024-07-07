@@ -6,7 +6,7 @@ start:
 	rm -f k6-error-logs.txt
 	rm nohup.out
 	pm2 start test-scenario.js
-	nohup ./run-scenario.sh
+	nohup ./run-scenario.sh &
 
 check:
 	cat nohup.out
