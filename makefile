@@ -2,9 +2,9 @@ IMAGE_NAME = reyshazni/antrein-testing-v5
 TAG = latest
 
 start:
-	rm k6-error-logs.txt
+	rm -f k6-error-logs.txt
 	pm2 start test-scenario.js
-	./run-scenario.sh
+	nohup ./run-scenario.sh &
 
 stop:
 	pm2 stop test-scenario.js
