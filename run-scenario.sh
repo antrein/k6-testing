@@ -53,7 +53,7 @@ fetch_infra_mode_and_be_mode() {
   local success=false
   
   while [ $retry_count -lt $max_retries ]; do
-    local response=$(curl -s https://infra.antrein9.cloud)
+    local response=$(curl -s https://infra.antrein10.cloud)
     if [ $? -eq 0 ]; then
       local infra_mode=$(echo $response | jq -r '.infra_mode')
       local be_mode=$(echo $response | jq -r '.be_mode')
@@ -81,7 +81,7 @@ check_server_health() {
   local success=false
 
   while [ $retry_count -lt $max_retries ]; do
-    local response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" https://infra.antrein9.cloud)
+    local response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" https://infra.antrein10.cloud)
     local http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
     
     if [ "$http_code" -eq 200 ]; then
@@ -102,7 +102,7 @@ check_server_health() {
 }
 
 check_stress_test_health() {
-  local response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" https://infra.antrein9.cloud)
+  local response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" https://infra.antrein10.cloud)
   local http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
   
   if [ "$http_code" -eq 200 ]; then
@@ -118,7 +118,7 @@ check_stress_test_health() {
 infra_be_modes=($(fetch_infra_mode_and_be_mode))
 infra_mode=${infra_be_modes[0]}
 be_mode=${infra_be_modes[1]}
-BASE_URL="https://api.antrein9.cloud/${be_mode}/dashboard"
+BASE_URL="https://api.antrein10.cloud/${be_mode}/dashboard"
 
 # Function to log in and retrieve the token
 login() {
@@ -203,7 +203,7 @@ gather_project_urls() {
   local project_urls=()
   for ((i=1; i<=num_projects; i++)); do
     project_id="${ARTICLE}${NODES}${CPU}${MEMORY}${s}${i}"
-    project_url="https://${project_id}.antrein9.cloud/"
+    project_url="https://${project_id}.antrein10.cloud/"
     project_urls+=("$project_url")
   done
   echo "${project_urls[@]}"
@@ -261,7 +261,7 @@ fetch_gcp_cluster_details() {
 # Function to clear projects
 clear_projects() {
   echo "Clearing all projects..."
-  curl -X DELETE "https://api.antrein9.cloud/${be_mode}/dashboard/project/clear" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json"
+  curl -X DELETE "https://api.antrein10.cloud/${be_mode}/dashboard/project/clear" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json"
   echo -e "\nAll projects cleared."
 }
 
