@@ -110,7 +110,7 @@ app.post('/test', (req, res) => {
           sheets.spreadsheets.values.append(
             {
               spreadsheetId: SHEET_ID,
-              range: `scenario!A1`,
+              range: `scenario_3_replica!A1`,
               valueInputOption: 'RAW',
               resource,
             },
@@ -218,7 +218,7 @@ app.post('/test-stress', (req, res) => {
             sheets.spreadsheets.values.append(
               {
                 spreadsheetId: SHEET_ID,
-                range: `stress!A1`,
+                range: `stress_3_replica!A1`,
                 valueInputOption: 'RAW',
                 resource,
               },
@@ -329,7 +329,7 @@ app.post('/test', (req, res) => {
           sheets.spreadsheets.values.append(
             {
               spreadsheetId: SHEET_ID,
-              range: `scenario!A1`,
+              range: `scenario_3_replica!A1`,
               valueInputOption: 'RAW',
               resource,
             },
@@ -381,7 +381,7 @@ app.post('/push-test-stress', async (req, res) => {
     sheets.spreadsheets.values.append(
       {
         spreadsheetId: SHEET_ID,
-        range: `stress!A1`,
+        range: `stress_3_replica!A1`,
         valueInputOption: 'RAW',
         resource,
       },
