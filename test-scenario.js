@@ -237,7 +237,38 @@ app.post('/test-stress', (req, res) => {
             return res.status(500).send(`Error authenticating with Google Sheets: ${err}`);
           }
         } else {
-          return res.status(200).send({ message: 'Stress test passed.', status });
+          try {
+            const sheets = await getSheetsClient();
+            const maxVirtualUsers = calculateMaxVirtualUser(successRate, virtualUsers)
+            const values = [
+              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, maxVirtualUsers, status],
+            ];
+
+            const resource = {
+              values,
+            };
+
+            sheets.spreadsheets.values.append(
+              {
+                spreadsheetId: SHEET_ID,
+                range: `stress_5_replica!A1`,
+                valueInputOption: 'RAW',
+                resource,
+              },
+              (err, result) => {
+                if (err) {
+                  console.error(`Google Sheets API error: ${err}`);
+                  return res.status(500).send(`Error updating Google Sheet: ${err}`);
+                } else {
+                  console.log(`${result.data.updates.updatedCells} cells updated.`);
+                  return res.status(201).send({ message: 'Stress test passed!', status });
+                }
+              }
+            );
+          } catch (err) {
+            console.error(`Google Sheets API error: ${err}`);
+            return res.status(500).send(`Error authenticating with Google Sheets: ${err}`);
+          }
         }
       });
     });
