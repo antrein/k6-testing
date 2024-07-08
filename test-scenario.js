@@ -208,7 +208,7 @@ app.post('/test-stress', (req, res) => {
             const sheets = await getSheetsClient();
             const maxVirtualUsers = calculateMaxVirtualUser(successRate, virtualUsers)
             const values = [
-              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, maxVirtualUsers, status],
+              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, virtualUsers, status],
             ];
 
             const resource = {
@@ -241,7 +241,7 @@ app.post('/test-stress', (req, res) => {
             const sheets = await getSheetsClient();
             const maxVirtualUsers = calculateMaxVirtualUser(successRate, virtualUsers)
             const values = [
-              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, maxVirtualUsers, status],
+              [startTimestampJakarta, endTimestampJakarta, infra_mode, be_mode, platform, nodes, cpu, memory, virtualUsers, status],
             ];
 
             const resource = {
@@ -261,7 +261,7 @@ app.post('/test-stress', (req, res) => {
                   return res.status(500).send(`Error updating Google Sheet: ${err}`);
                 } else {
                   console.log(`${result.data.updates.updatedCells} cells updated.`);
-                  return res.status(201).send({ message: 'Stress test passed!', status });
+                  return res.status(200).send({ message: 'Stress test passed!', status });
                 }
               }
             );
