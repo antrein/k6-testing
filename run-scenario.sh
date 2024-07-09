@@ -21,6 +21,9 @@ scenario_number_of_vus=(
 
 # Stress testing VUs
 stress_vus=(
+  "32000"
+  "35000"
+  "39000"
   "42000"
   "45000"
   "48000"
