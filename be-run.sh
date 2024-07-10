@@ -21,7 +21,9 @@ scenario_number_of_vus=(
 EMAIL="riandyhsn@gmail.com"
 PASSWORD="babiguling123"
 K6_RUN_URL="http://localhost:3001/run"
-K6_TEST_URL="http://localhost:3002/test"
+K6_TEST_URL_1="http://localhost:3002/test1"
+K6_TEST_URL_2="http://localhost:3003/test2"
+K6_TEST_URL_3="http://localhost:3004/test3"
 HTML_HOST="demo-ticketing.site"
 THRESHOLD=2
 SESSION_TIME=1
@@ -36,7 +38,7 @@ fetch_infra_mode_and_be_mode() {
   local success=false
   
   while [ $retry_count -lt $max_retries ]; do
-    local response=$(curl -s https://infra.antrein13.cloud)
+    local response=$(curl -s https://infra.antrein14.cloud)
     if [ $? -eq 0 ]; then
       local infra_mode=$(echo $response | jq -r '.infra_mode')
       local be_mode=$(echo $response | jq -r '.be_mode')
@@ -64,7 +66,7 @@ check_server_health() {
   local success=false
 
   while [ $retry_count -lt $max_retries ]; do
-    local response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" https://infra.antrein13.cloud)
+    local response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" https://infra.antrein14.cloud)
     local http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
     
     if [ "$http_code" -eq 200 ]; then
@@ -88,7 +90,7 @@ check_server_health() {
 infra_be_modes=($(fetch_infra_mode_and_be_mode))
 infra_mode=${infra_be_modes[0]}
 be_mode=${infra_be_modes[1]}
-BASE_URL="https://api.antrein13.cloud/${be_mode}/dashboard"
+BASE_URL="https://api.antrein14.cloud/${be_mode}/dashboard"
 
 # Function to log in and retrieve the token
 login() {
@@ -173,7 +175,7 @@ gather_project_urls() {
   local project_urls=()
   for ((i=1; i<=num_projects; i++)); do
     project_id="${ARTICLE}${NODES}${CPU}${MEMORY}${s}${i}"
-    project_url="https://${project_id}.antrein13.cloud/"
+    project_url="https://${project_id}.antrein14.cloud/"
     project_urls+=("$project_url")
   done
   echo "${project_urls[@]}"
@@ -190,7 +192,7 @@ fetch_gcp_cluster_details() {
 # Function to clear projects
 clear_projects() {
   echo "Clearing all projects..."
-  curl -X DELETE "https://api.antrein13.cloud/${be_mode}/dashboard/project/clear" -H "Authorization: Bearer $token" -H "Content-Type: application/json"
+  curl -X DELETE "https://api.antrein14.cloud/${be_mode}/dashboard/project/clear" -H "Authorization: Bearer $token" -H "Content-Type: application/json"
   echo -e "\nAll projects cleared."
 }
 
@@ -243,10 +245,12 @@ send_run_request() {
 
 # Function to send test request to the local server
 send_test_request() {
-  echo "Creating request"
-  local vus_per_endpoint=$1
-  shift
+  local test_url=$1
+  local vus_per_endpoint=$2
+  shift 2
   local project_urls=("$@")
+
+  echo "Creating request for $test_url"
 
   local json_payload=$(jq -n \
     --argjson endpoints "$(printf '%s\n' "${project_urls[@]}" | jq -R . | jq -s .)" \
@@ -273,7 +277,7 @@ send_test_request() {
   echo "request payload"
   echo $json_payload
 
-  response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$K6_TEST_URL" -H "Content-Type: application/json" -d "$json_payload")
+  response=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$test_url" -H "Content-Type: application/json" -d "$json_payload")
   http_code=$(echo "$response" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
   response_body=$(echo "$response" | sed '/HTTP_STATUS_CODE/d')
   
@@ -281,13 +285,12 @@ send_test_request() {
     echo "Test completed and data uploaded to Google Sheets."
   else
     echo "Error: Received HTTP status code $http_code"
-    echo "Endpoint: $K6_TEST_URL"
+    echo "Endpoint: $test_url"
     echo "Payload: $json_payload"
     echo "Response: $response_body"
   fi
   echo ""
 }
-
 
 # Main script
 login
@@ -331,9 +334,12 @@ for project_count in "${scenario_number_of_project[@]}"; do
     # Start run and test requests in parallel
     send_run_request "$vus_count" "${project_urls[@]}" &
     sleep 5  # Delay the test request by 5 seconds
-    send_test_request "$vus_count" "${project_urls[@]}" &
     
-    wait  # Wait for both background processes to finish
+    send_test_request "$K6_TEST_URL_1" "$vus_count" "${project_urls[@]}" &
+    send_test_request "$K6_TEST_URL_2" "$vus_count" "${project_urls[@]}" &
+    send_test_request "$K6_TEST_URL_3" "$vus_count" "${project_urls[@]}" &
+    
+    wait  # Wait for all background processes to finish
     
     echo "Pausing 10 seconds between testing scenarios"
     sleep 10

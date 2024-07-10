@@ -1,0 +1,46 @@
+Logging in...
+Login successful. Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA0OTU1NiwiaWF0IjoxNzIwNjE3NTU2fQ.GNiMgts_1K9Ir3BY4iU7FIIfGpzbCkfqCOWfGrxzqVw
+Activated service account credentials for: [bot-admin@antrein-ta.iam.gserviceaccount.com]
+Fetching cluster endpoint and auth data.
+kubeconfig entry generated for antrein.
+Server is healthy.
+Clearing all projects...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100    68  100    68    0     0     54      0  0:00:01  0:00:01 --:--:--    54
+{"status":200,"message":"OK","data":"Berhasil clear semua project"}
+
+All projects cleared.
+Creating resources for 1 projects
+Server is healthy.
+Project testing14163211 created successfully.
+Server is healthy.
+Project testing14163211 configured successfully.
+Project testing14163211 created and configured.
+Pausing for 60 seconds to provision resources
+Provisioning resources, please wait... 60Provisioning resources, please wait... 59Provisioning resources, please wait... 58Provisioning resources, please wait... 57Provisioning resources, please wait... 56Provisioning resources, please wait... 55Provisioning resources, please wait... 54Provisioning resources, please wait... 53Provisioning resources, please wait... 52Provisioning resources, please wait... 51Provisioning resources, please wait... 50Provisioning resources, please wait... 49Provisioning resources, please wait... 48Provisioning resources, please wait... 47Provisioning resources, please wait... 46Provisioning resources, please wait... 45Provisioning resources, please wait... 44Provisioning resources, please wait... 43Provisioning resources, please wait... 42Provisioning resources, please wait... 41Provisioning resources, please wait... 40Provisioning resources, please wait... 39Provisioning resources, please wait... 38Provisioning resources, please wait... 37Provisioning resources, please wait... 36Provisioning resources, please wait... 35Provisioning resources, please wait... 34Provisioning resources, please wait... 33Provisioning resources, please wait... 32Provisioning resources, please wait... 31Provisioning resources, please wait... 30Provisioning resources, please wait... 29Provisioning resources, please wait... 28Provisioning resources, please wait... 27Provisioning resources, please wait... 26Provisioning resources, please wait... 25Provisioning resources, please wait... 24Provisioning resources, please wait... 23Provisioning resources, please wait... 22Provisioning resources, please wait... 21Provisioning resources, please wait... 20Provisioning resources, please wait... 19Provisioning resources, please wait... 18Provisioning resources, please wait... 17Provisioning resources, please wait... 16Provisioning resources, please wait... 15Provisioning resources, please wait... 14Provisioning resources, please wait... 13Provisioning resources, please wait... 12Provisioning resources, please wait... 11Provisioning resources, please wait... 10Provisioning resources, please wait... 9Provisioning resources, please wait... 8Provisioning resources, please wait... 7Provisioning resources, please wait... 6Provisioning resources, please wait... 5Provisioning resources, please wait... 4Provisioning resources, please wait... 3Provisioning resources, please wait... 2Provisioning resources, please wait... 1
+Run k6 testing for 1 projects
+Server is healthy.
+Creating request
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing14163211.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "bc", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA0OTU1NiwiaWF0IjoxNzIwNjE3NTU2fQ.GNiMgts_1K9Ir3BY4iU7FIIfGpzbCkfqCOWfGrxzqVw" }
+Creating request
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing14163211.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "bc", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA0OTU1NiwiaWF0IjoxNzIwNjE3NTU2fQ.GNiMgts_1K9Ir3BY4iU7FIIfGpzbCkfqCOWfGrxzqVw" }
+Error: Received HTTP status code 500
+Endpoint: http://localhost:3002/test
+Payload: {
+  "vus_per_endpoint": "1",
+  "endpoints": [
+    "https://testing14163211.antrein14.cloud/"
+  ],
+  "platform": "gcp",
+  "nodes": "4",
+  "cpu": "16",
+  "memory": "32",
+  "infra_mode": "shared",
+  "be_mode": "bc",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA0OTU1NiwiaWF0IjoxNzIwNjE3NTU2fQ.GNiMgts_1K9Ir3BY4iU7FIIfGpzbCkfqCOWfGrxzqVw"
+}
+Response: Error running k6: Error: Command failed: k6 run /Users/reyshazni/Desktop/Kuliah/KP/TA/Repo/k6-testing/temp_k6_be.js --summary-export output.json 2>> /Users/reyshazni/Desktop/Kuliah/KP/TA/Repo/k6-testing/k6-error-logs.txt
+
