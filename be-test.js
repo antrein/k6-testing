@@ -7,23 +7,11 @@ const { google } = require('googleapis');
 const moment = require('moment-timezone');
 
 const app = express();
-const port = 3001;
-
-const failedThreshold = 5
+const port = 3002;
 
 const SHEET_ID = '1qtKIWwuslWP9ICPOF0Kkx74gdTuytFeWJn6gg2iBwsY'; // Replace with your Google Sheet ID
 
 app.use(bodyParser.json());
-
-function calculateMaxVirtualUser(successRate, virtualUsers) {
-  // Calculate the max_virtual_user based on the given formula
-  let max_virtual_user = (virtualUsers - 2000) + ((virtualUsers - (virtualUsers - 2000)) * (successRate / failedThreshold));
-  
-  // Round the result to the nearest integer
-  max_virtual_user = Math.round(max_virtual_user);
-  
-  return max_virtual_user;
-}
 
 
 async function getSheetsClient() {
@@ -36,15 +24,15 @@ async function getSheetsClient() {
   return google.sheets({ version: 'v4', auth: authClient });
 }
 
-app.post('/test-be', (req, res) => {
-    const { vus_per_endpoint, endpoints, platform, nodes, cpu, memory, infra_mode, be_mode } = req.body;
+app.post('/test', (req, res) => {
+    const { vus_per_endpoint, endpoints, platform, nodes, cpu, memory, infra_mode, be_mode, token } = req.body;
   
-    if (!vus_per_endpoint || !endpoints || !Array.isArray(endpoints) || !platform || !nodes || !cpu || !memory || !infra_mode || !be_mode) {
-      return res.status(400).send('Required parameters: vus, endpoints, platform, nodes, cpu, memory, infra_mode, be_mode');
+    if (!vus_per_endpoint || !endpoints || !Array.isArray(endpoints) || !platform || !nodes || !cpu || !memory || !infra_mode || !be_mode || !be_mode) {
+      return res.status(400).send('Required parameters: vus, endpoints, platform, nodes, cpu, memory, infra_mode, be_mode, token');
     }
   
-    const k6ScriptPath = path.join(__dirname, 'k6-scenario.js');
-    const tempScriptPath = path.join(__dirname, 'temp_k6_script.js');
+    const k6ScriptPath = path.join(__dirname, 'be-k6.js');
+    const tempScriptPath = path.join(__dirname, 'temp_k6_be.js');
   
     // Read the k6 script template
     let k6Script = fs.readFileSync(k6ScriptPath, 'utf8');
@@ -52,6 +40,7 @@ app.post('/test-be', (req, res) => {
     // Replace placeholders with actual values
     k6Script = k6Script.replace('__ENDPOINTS__', JSON.stringify(endpoints));
     k6Script = k6Script.replace('__VUS__', vus_per_endpoint);
+    k6Script = k6Script.replace('__TOKEN__', token);
   
     // Write the modified script to a temporary file
     fs.writeFileSync(tempScriptPath, k6Script);
