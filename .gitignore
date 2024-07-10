@@ -127,3 +127,5 @@ dist
 .pnp.*
 
 *temp*
+
+k6-error-logs*
