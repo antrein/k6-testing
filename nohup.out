@@ -1,46 +1,179 @@
 Logging in...
-Login successful. Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA0OTU1NiwiaWF0IjoxNzIwNjE3NTU2fQ.GNiMgts_1K9Ir3BY4iU7FIIfGpzbCkfqCOWfGrxzqVw
+Login successful. Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8
 Activated service account credentials for: [bot-admin@antrein-ta.iam.gserviceaccount.com]
 Fetching cluster endpoint and auth data.
 kubeconfig entry generated for antrein.
 Server is healthy.
 Clearing all projects...
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100    68  100    68    0     0     54      0  0:00:01  0:00:01 --:--:--    54
-{"status":200,"message":"OK","data":"Berhasil clear semua project"}
 
 All projects cleared.
 Creating resources for 1 projects
 Server is healthy.
-Project testing14163211 created successfully.
+Project testing24163210015241 created successfully.
 Server is healthy.
-Project testing14163211 configured successfully.
-Project testing14163211 created and configured.
+Project testing24163210015241 configured successfully.
+Project testing24163210015241 created and configured.
 Pausing for 60 seconds to provision resources
 Provisioning resources, please wait... 60Provisioning resources, please wait... 59Provisioning resources, please wait... 58Provisioning resources, please wait... 57Provisioning resources, please wait... 56Provisioning resources, please wait... 55Provisioning resources, please wait... 54Provisioning resources, please wait... 53Provisioning resources, please wait... 52Provisioning resources, please wait... 51Provisioning resources, please wait... 50Provisioning resources, please wait... 49Provisioning resources, please wait... 48Provisioning resources, please wait... 47Provisioning resources, please wait... 46Provisioning resources, please wait... 45Provisioning resources, please wait... 44Provisioning resources, please wait... 43Provisioning resources, please wait... 42Provisioning resources, please wait... 41Provisioning resources, please wait... 40Provisioning resources, please wait... 39Provisioning resources, please wait... 38Provisioning resources, please wait... 37Provisioning resources, please wait... 36Provisioning resources, please wait... 35Provisioning resources, please wait... 34Provisioning resources, please wait... 33Provisioning resources, please wait... 32Provisioning resources, please wait... 31Provisioning resources, please wait... 30Provisioning resources, please wait... 29Provisioning resources, please wait... 28Provisioning resources, please wait... 27Provisioning resources, please wait... 26Provisioning resources, please wait... 25Provisioning resources, please wait... 24Provisioning resources, please wait... 23Provisioning resources, please wait... 22Provisioning resources, please wait... 21Provisioning resources, please wait... 20Provisioning resources, please wait... 19Provisioning resources, please wait... 18Provisioning resources, please wait... 17Provisioning resources, please wait... 16Provisioning resources, please wait... 15Provisioning resources, please wait... 14Provisioning resources, please wait... 13Provisioning resources, please wait... 12Provisioning resources, please wait... 11Provisioning resources, please wait... 10Provisioning resources, please wait... 9Provisioning resources, please wait... 8Provisioning resources, please wait... 7Provisioning resources, please wait... 6Provisioning resources, please wait... 5Provisioning resources, please wait... 4Provisioning resources, please wait... 3Provisioning resources, please wait... 2Provisioning resources, please wait... 1
 Run k6 testing for 1 projects
 Server is healthy.
-Creating request
+Creating run request
 request payload
-{ "vus_per_endpoint": "1", "endpoints": [ "https://testing14163211.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "bc", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA0OTU1NiwiaWF0IjoxNzIwNjE3NTU2fQ.GNiMgts_1K9Ir3BY4iU7FIIfGpzbCkfqCOWfGrxzqVw" }
-Creating request
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+Creating request for http://localhost:3002/test1
+Creating request for http://localhost:3003/test2
+Creating request for http://localhost:3004/test3
+./be-run.sh: line 360: wait: -n: invalid option
+wait: usage: wait [n]
+Pausing 10 seconds between testing scenarios
 request payload
-{ "vus_per_endpoint": "1", "endpoints": [ "https://testing14163211.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "bc", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA0OTU1NiwiaWF0IjoxNzIwNjE3NTU2fQ.GNiMgts_1K9Ir3BY4iU7FIIfGpzbCkfqCOWfGrxzqVw" }
-Error: Received HTTP status code 500
-Endpoint: http://localhost:3002/test
-Payload: {
-  "vus_per_endpoint": "1",
-  "endpoints": [
-    "https://testing14163211.antrein14.cloud/"
-  ],
-  "platform": "gcp",
-  "nodes": "4",
-  "cpu": "16",
-  "memory": "32",
-  "infra_mode": "shared",
-  "be_mode": "bc",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA0OTU1NiwiaWF0IjoxNzIwNjE3NTU2fQ.GNiMgts_1K9Ir3BY4iU7FIIfGpzbCkfqCOWfGrxzqVw"
-}
-Response: Error running k6: Error: Command failed: k6 run /Users/reyshazni/Desktop/Kuliah/KP/TA/Repo/k6-testing/temp_k6_be.js --summary-export output.json 2>> /Users/reyshazni/Desktop/Kuliah/KP/TA/Repo/k6-testing/k6-error-logs.txt
+request payload
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+be-run.sh: Test completed and data uploaded to Google Sheets.
 
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+Server is healthy.
+Creating run request
+request payload
+{ "vus_per_endpoint": "100", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+Creating request for http://localhost:3002/test1
+./be-run.sh: line 360: wait: -n: invalid option
+wait: usage: wait [n]
+Pausing 10 seconds between testing scenarios
+Creating request for http://localhost:3003/test2
+Creating request for http://localhost:3004/test3
+request payload
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+Server is healthy.
+Creating run request
+request payload
+{ "vus_per_endpoint": "500", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+Creating request for http://localhost:3002/test1
+Creating request for http://localhost:3003/test2
+./be-run.sh: line 360: wait: -n: invalid option
+wait: usage: wait [n]
+Pausing 10 seconds between testing scenarios
+Creating request for http://localhost:3004/test3
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+Server is healthy.
+Creating run request
+request payload
+{ "vus_per_endpoint": "1000", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+Creating request for http://localhost:3002/test1
+./be-run.sh: line 360: wait: -n: invalid option
+wait: usage: wait [n]
+Pausing 10 seconds between testing scenarios
+Creating request for http://localhost:3003/test2
+Creating request for http://localhost:3004/test3
+request payload
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+Server is healthy.
+Creating run request
+request payload
+{ "vus_per_endpoint": "2000", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+Creating request for http://localhost:3002/test1
+./be-run.sh: line 360: wait: -n: invalid option
+wait: usage: wait [n]
+Pausing 10 seconds between testing scenarios
+Creating request for http://localhost:3003/test2
+Creating request for http://localhost:3004/test3
+request payload
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163210015241.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+Pausing for 60 seconds to ramp down after testing all scenarios
+Ramping down, please wait... 60Ramping down, please wait... 59Ramping down, please wait... 58Ramping down, please wait... 57Ramping down, please wait... 56Ramping down, please wait... 55Ramping down, please wait... 54Ramping down, please wait... 53Ramping down, please wait... 52Ramping down, please wait... 51Ramping down, please wait... 50Ramping down, please wait... 49Ramping down, please wait... 48Ramping down, please wait... 47Ramping down, please wait... 46Ramping down, please wait... 45Ramping down, please wait... 44Ramping down, please wait... 43Ramping down, please wait... 42Ramping down, please wait... 41Ramping down, please wait... 40Ramping down, please wait... 39Ramping down, please wait... 38Ramping down, please wait... 37Ramping down, please wait... 36Ramping down, please wait... 35Ramping down, please wait... 34Ramping down, please wait... 33Ramping down, please wait... 32Ramping down, please wait... 31Ramping down, please wait... 30Ramping down, please wait... 29Ramping down, please wait... 28Ramping down, please wait... 27Ramping down, please wait... 26Ramping down, please wait... 25Ramping down, please wait... 24Ramping down, please wait... 23Ramping down, please wait... 22Ramping down, please wait... 21Ramping down, please wait... 20Ramping down, please wait... 19Ramping down, please wait... 18Ramping down, please wait... 17Ramping down, please wait... 16Ramping down, please wait... 15Ramping down, please wait... 14Ramping down, please wait... 13Ramping down, please wait... 12Ramping down, please wait... 11Ramping down, please wait... 10Ramping down, please wait... 9Ramping down, please wait... 8Ramping down, please wait... 7Ramping down, please wait... 6Ramping down, please wait... 5Ramping down, please wait... 4Ramping down, please wait... 3Ramping down, please wait... 2Ramping down, please wait... 1
+Server is healthy.
+Clearing all projects...
+
+All projects cleared.
+Creating resources for 3 projects
+Server is healthy.
+Project testing24163230018451 created successfully.
+Server is healthy.
+Project testing24163230018451 configured successfully.
+Project testing24163230018451 created and configured.
+Server is healthy.
+Project testing24163230018452 created successfully.
+Server is healthy.
+Project testing24163230018452 configured successfully.
+Project testing24163230018452 created and configured.
+Server is healthy.
+Project testing24163230018453 created successfully.
+Server is healthy.
+Project testing24163230018453 configured successfully.
+Project testing24163230018453 created and configured.
+Pausing for 60 seconds to provision resources
+Provisioning resources, please wait... 60Provisioning resources, please wait... 59Provisioning resources, please wait... 58Provisioning resources, please wait... 57Provisioning resources, please wait... 56Provisioning resources, please wait... 55Provisioning resources, please wait... 54Provisioning resources, please wait... 53Provisioning resources, please wait... 52Provisioning resources, please wait... 51Provisioning resources, please wait... 50Provisioning resources, please wait... 49Provisioning resources, please wait... 48Provisioning resources, please wait... 47Provisioning resources, please wait... 46Provisioning resources, please wait... 45Provisioning resources, please wait... 44Provisioning resources, please wait... 43Provisioning resources, please wait... 42Provisioning resources, please wait... 41Provisioning resources, please wait... 40Provisioning resources, please wait... 39Provisioning resources, please wait... 38Provisioning resources, please wait... 37Provisioning resources, please wait... 36Provisioning resources, please wait... 35Provisioning resources, please wait... 34Provisioning resources, please wait... 33Provisioning resources, please wait... 32Provisioning resources, please wait... 31Provisioning resources, please wait... 30Provisioning resources, please wait... 29Provisioning resources, please wait... 28Provisioning resources, please wait... 27Provisioning resources, please wait... 26Provisioning resources, please wait... 25Provisioning resources, please wait... 24Provisioning resources, please wait... 23Provisioning resources, please wait... 22Provisioning resources, please wait... 21Provisioning resources, please wait... 20Provisioning resources, please wait... 19Provisioning resources, please wait... 18Provisioning resources, please wait... 17Provisioning resources, please wait... 16Provisioning resources, please wait... 15Provisioning resources, please wait... 14Provisioning resources, please wait... 13Provisioning resources, please wait... 12Provisioning resources, please wait... 11Provisioning resources, please wait... 10Provisioning resources, please wait... 9Provisioning resources, please wait... 8Provisioning resources, please wait... 7Provisioning resources, please wait... 6Provisioning resources, please wait... 5Provisioning resources, please wait... 4Provisioning resources, please wait... 3Provisioning resources, please wait... 2Provisioning resources, please wait... 1
+Run k6 testing for 3 projects
+Server is healthy.
+Creating run request
+request payload
+{ "vus_per_endpoint": "1", "endpoints": [ "https://testing24163230018451.antrein14.cloud/", "https://testing24163230018452.antrein14.cloud/", "https://testing24163230018453.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+Creating request for http://localhost:3002/test1
+./be-run.sh: line 360: wait: -n: invalid option
+wait: usage: wait [n]
+Pausing 10 seconds between testing scenarios
+Creating request for http://localhost:3003/test2
+Creating request for http://localhost:3004/test3
+request payload
+{ "vus_per_endpoint": "3", "endpoints": [ "https://testing24163230018451.antrein14.cloud/", "https://testing24163230018452.antrein14.cloud/", "https://testing24163230018453.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+request payload
+{ "vus_per_endpoint": "3", "endpoints": [ "https://testing24163230018451.antrein14.cloud/", "https://testing24163230018452.antrein14.cloud/", "https://testing24163230018453.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+request payload
+{ "vus_per_endpoint": "3", "endpoints": [ "https://testing24163230018451.antrein14.cloud/", "https://testing24163230018452.antrein14.cloud/", "https://testing24163230018453.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+be-run.sh: Test completed and data uploaded to Google Sheets.
+
+Server is healthy.
+Creating run request
+request payload
+{ "vus_per_endpoint": "100", "endpoints": [ "https://testing24163230018451.antrein14.cloud/", "https://testing24163230018452.antrein14.cloud/", "https://testing24163230018453.antrein14.cloud/" ], "platform": "gcp", "nodes": "4", "cpu": "16", "memory": "32", "infra_mode": "shared", "be_mode": "dd", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYzk5YzhjZjktZmM0Ny00YmU0LWFlZWEtMDgzYmQ2NDMzZDc1IiwiaXNzIjoicmVzdCIsImV4cCI6MTcyMTA2MzcxOCwiaWF0IjoxNzIwNjMxNzE4fQ.9LotPXER7M9_abui8effu1QnvJBVzESgin8sbD9QIR8" }

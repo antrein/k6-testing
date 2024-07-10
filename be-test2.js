@@ -39,7 +39,7 @@ app.post('/test1', (req, res) => {
   // Replace placeholders with actual values
   const project_id = endpoints[0].match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1]; // Extract project_id from the first endpoint
   const baseEndpoint = `https://api.antrein14.cloud/${be_mode}/dashboard/project/detail/${project_id}`;
-  k6Script = k6Script.replace('__ENDPOINT__', JSON.stringify(baseEndpoint));
+  k6Script = k6Script.replace('__ENDPOINT__',  baseEndpoint);
   k6Script = k6Script.replace('__TOKEN__', token);
   k6Script = k6Script.replace('__VUS__', vus_per_endpoint);
   k6Script = k6Script.replace('__METHOD__', 'GET');
@@ -66,8 +66,8 @@ app.post('/test2', (req, res) => {
 
   // Replace placeholders with actual values
   const project_id = endpoints[0].match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1]; // Extract project_id from the first endpoint
-  const baseEndpoint = `https://api.antrein14.cloud/${be_mode}/dashboard/analytic?project_id=${project_id}`;
-  k6Script = k6Script.replace('__ENDPOINT__', JSON.stringify(baseEndpoint));
+  const baseEndpoint = `https://api.antrein14.cloud/${be_mode}/dashboard/analytic/${project_id}`;
+  k6Script = k6Script.replace('__ENDPOINT__',  baseEndpoint);
   k6Script = k6Script.replace('__TOKEN__', token);
   k6Script = k6Script.replace('__VUS__', vus_per_endpoint);
   k6Script = k6Script.replace('__METHOD__', 'GET');
@@ -95,7 +95,7 @@ app.post('/test3', (req, res) => {
   // Replace placeholders with actual values
   const project_id = endpoints[0].match(/https:\/\/(?:.*\.)?(.+)\.antrein\d*\.cloud/)[1]; // Extract project_id from the first endpoint
   const baseEndpoint = `https://api.antrein14.cloud/${be_mode}/dashboard/auth/login`;
-  k6Script = k6Script.replace('__ENDPOINT__', JSON.stringify(baseEndpoint));
+  k6Script = k6Script.replace('__ENDPOINT__',  baseEndpoint);
   k6Script = k6Script.replace('__TOKEN__', token);
   k6Script = k6Script.replace('__VUS__', vus_per_endpoint);
   k6Script = k6Script.replace('__METHOD__', 'POST');
@@ -115,7 +115,7 @@ function executeK6Test(tempScriptPath, res, infra_mode, be_mode, platform, nodes
   const logFilePath = path.join(__dirname, 'k6-error-logs.txt');
 
   // Execute the k6 test using the generated script and save output as JSON, capturing stderr
-  exec(`k6 run ${tempScriptPath} --summary-export output.json 2>> ${logFilePath}`, { maxBuffer: 1024 * 1024 * 20 }, async (error, stdout, stderr) => {
+  exec(`k6 run ${tempScriptPath} --summary-export output_${scenario}.json 2>> ${logFilePath}`, { maxBuffer: 1024 * 1024 * 20 }, async (error, stdout, stderr) => {
     // Capture the end time
     const endTime = moment().utc().format();
 
@@ -131,7 +131,7 @@ function executeK6Test(tempScriptPath, res, infra_mode, be_mode, platform, nodes
     console.error(`stderr: ${stderr}`);
 
     // Read the JSON output and upload necessary data to Google Sheets
-    fs.readFile('output.json', 'utf8', async (err, data) => {
+    fs.readFile(`output_${scenario}.json`, 'utf8', async (err, data) => {
       if (err) {
         console.error(`readFile error: ${err}`);
         return res.status(500).send(`Error reading output file: ${err}`);
@@ -183,7 +183,7 @@ function executeK6Test(tempScriptPath, res, infra_mode, be_mode, platform, nodes
                 return res.status(500).send(`Error updating Google Sheet: ${err}`);
               } else {
                 console.log(`${result.data.updates.updatedCells} cells updated.`);
-                res.status(200).send('Test completed and data uploaded to Google Sheets.');
+                res.status(200).send('be-test.js: Test completed and data uploaded to Google Sheets.');
               }
             }
           );

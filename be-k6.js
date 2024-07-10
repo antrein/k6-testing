@@ -19,7 +19,7 @@ export const options = {
       executor: 'per-vu-iterations',
       vus: vus,
       iterations: 1,
-      maxDuration: '5m',
+      maxDuration: '10s',
     },
   },
 };
@@ -70,7 +70,7 @@ function runRequest(endpoint, method, request_body, infra_mode, be_mode) {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
-    timeout: '3000s',
+    timeout: '10s',
   };
 
   let response;

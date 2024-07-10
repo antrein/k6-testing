@@ -1,5 +1,5 @@
 # Configuration variables
-ARTICLE="testing1"
+ARTICLE="testing2"
 PLATFORM="gcp"
 
 # Scenarios: Number of projects and VUs per project
@@ -103,16 +103,23 @@ login() {
 EOF
 )
 
-  RESPONSE=$(curl -s -X POST "$BASE_URL/auth/login" -H "Content-Type: application/json" -d "$LOGIN_DATA")
-  token=$(echo $RESPONSE | jq -r '.data.token')
+  RESPONSE=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$BASE_URL/auth/login" -H "Content-Type: application/json" -d "$LOGIN_DATA")
+  HTTP_STATUS=$(echo "$RESPONSE" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
+  RESPONSE_BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS_CODE/d')
 
-  if [ "$token" = "null" ]; then
-    echo "Login failed. Exiting."
+  if [ "$HTTP_STATUS" -eq 200 ]; then
+    token=$(echo "$RESPONSE_BODY" | jq -r '.data.token')
+    if [ "$token" = "null" ] || [ -z "$token" ]; then
+      echo "Login failed: token is null or empty. Response: $RESPONSE_BODY"
+      exit 1
+    fi
+    echo "Login successful. Token: $token"
+  else
+    echo "Login failed with HTTP status $HTTP_STATUS. Response: $RESPONSE_BODY"
     exit 1
   fi
-
-  echo "Login successful. Token: $token"
 }
+
 
 # Function to create and configure a project
 create_and_configure_project() {
@@ -127,14 +134,15 @@ EOF
   )
   check_server_health
 
-  CREATE_PROJECT_RESPONSE=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$BASE_URL/project" -H "Authorization: Bearer $token" -H "Content-Type: application/json" -d "$CREATE_PROJECT_DATA")
+  CREATE_PROJECT_RESPONSE=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X POST "$BASE_URL/project/" -H "Authorization: Bearer $token" -H "Content-Type: application/json" -d "$CREATE_PROJECT_DATA")
   HTTP_STATUS=$(echo "$CREATE_PROJECT_RESPONSE" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
   RESPONSE_BODY=$(echo "$CREATE_PROJECT_RESPONSE" | sed '/HTTP_STATUS_CODE/d')
   
   if [[ "$HTTP_STATUS" =~ ^2 ]]; then
     echo "Project $project_id created successfully."
   else
-    echo "Failed to create project $project_id. Exiting."
+    echo "be-run: Failed to create project $project_id. Exiting."
+    echo $RESPONSE_BODY
     exit 1
   fi
 
@@ -172,9 +180,10 @@ EOF
 gather_project_urls() {
   local num_projects=$1
   local s=$2
+  local timestamp=$3
   local project_urls=()
   for ((i=1; i<=num_projects; i++)); do
-    project_id="${ARTICLE}${NODES}${CPU}${MEMORY}${s}${i}"
+    project_id="${ARTICLE}${NODES}${CPU}${MEMORY}${s}${timestamp}${i}"
     project_url="https://${project_id}.antrein14.cloud/"
     project_urls+=("$project_url")
   done
@@ -192,13 +201,21 @@ fetch_gcp_cluster_details() {
 # Function to clear projects
 clear_projects() {
   echo "Clearing all projects..."
-  curl -X DELETE "https://api.antrein14.cloud/${be_mode}/dashboard/project/clear" -H "Authorization: Bearer $token" -H "Content-Type: application/json"
-  echo -e "\nAll projects cleared."
+  RESPONSE=$(curl -s -w "\nHTTP_STATUS_CODE:%{http_code}" -X DELETE "https://api.antrein14.cloud/${be_mode}/dashboard/project/clear" -H "Authorization: Bearer $token" -H "Content-Type: application/json")
+  HTTP_STATUS=$(echo "$RESPONSE" | grep 'HTTP_STATUS_CODE' | awk -F: '{print $2}')
+  RESPONSE_BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS_CODE/d')
+
+  if [ "$HTTP_STATUS" -eq 200 ]; then
+    echo -e "\nAll projects cleared."
+  else
+    echo "be-run.sh: Error clearing projects. HTTP status: $HTTP_STATUS. Response: $RESPONSE_BODY"
+    exit 1
+  fi
 }
 
 # Function to send run request to the local server
 send_run_request() {
-  echo "Creating request"
+  echo "Creating run request"
   local vus_per_endpoint=$1
   shift
   local project_urls=("$@")
@@ -282,7 +299,7 @@ send_test_request() {
   response_body=$(echo "$response" | sed '/HTTP_STATUS_CODE/d')
   
   if [ "$http_code" -eq 200 ]; then
-    echo "Test completed and data uploaded to Google Sheets."
+    echo "be-run.sh: Test completed and data uploaded to Google Sheets."
   else
     echo "Error: Received HTTP status code $http_code"
     echo "Endpoint: $test_url"
@@ -313,8 +330,9 @@ for project_count in "${scenario_number_of_project[@]}"; do
 
   clear_projects
   echo "Creating resources for $project_count projects"
+  timestamp=$(date +%H%M%S)
   for ((i=1; i<=project_count; i++)); do
-    project_id="${ARTICLE}${NODES}${CPU}${MEMORY}${project_count}${i}"
+    project_id="${ARTICLE}${NODES}${CPU}${MEMORY}${project_count}${timestamp}${i}"
     create_and_configure_project $project_id
   done
 
@@ -327,20 +345,20 @@ for project_count in "${scenario_number_of_project[@]}"; do
   echo -ne '\n'
 
   echo "Run k6 testing for $project_count projects"
-  project_urls=($(gather_project_urls $project_count $project_count))
+  project_urls=($(gather_project_urls $project_count $project_count $timestamp))
   for vus_count in "${scenario_number_of_vus[@]}"; do
     check_server_health
     
     # Start run and test requests in parallel
     send_run_request "$vus_count" "${project_urls[@]}" &
-    sleep 5  # Delay the test request by 5 seconds
+    sleep 5
     
-    send_test_request "$K6_TEST_URL_1" "$vus_count" "${project_urls[@]}" &
-    send_test_request "$K6_TEST_URL_2" "$vus_count" "${project_urls[@]}" &
-    send_test_request "$K6_TEST_URL_3" "$vus_count" "${project_urls[@]}" &
+    send_test_request "$K6_TEST_URL_1" "$project_count" "${project_urls[@]}" &
+    send_test_request "$K6_TEST_URL_2" "$project_count" "${project_urls[@]}" &
+    send_test_request "$K6_TEST_URL_3" "$project_count" "${project_urls[@]}" &
     
-    wait  # Wait for all background processes to finish
-    
+    wait -n
+
     echo "Pausing 10 seconds between testing scenarios"
     sleep 10
   done
