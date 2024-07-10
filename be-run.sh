@@ -3,19 +3,9 @@ ARTICLE="testing2"
 PLATFORM="gcp"
 
 # Scenarios: Number of projects and VUs per project
-scenario_number_of_project=(
-  "1"
-  "3"
-  "5"
-)
+scenario_number_of_project=("1" "3" "5")
 
-scenario_number_of_vus=(
-  "1"
-  "100"
-  "500"
-  "1000"
-  "2000"
-)
+scenario_number_of_vus=("1" "100" "500" "1000" "2000")
 
 # Variable
 EMAIL="riandyhsn@gmail.com"
